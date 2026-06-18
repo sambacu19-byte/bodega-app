@@ -38,6 +38,52 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .logo-icon svg{width:16px;height:16px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
 .logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
 
+/* SETTINGS BUTTON */
+.btn-settings{
+  margin-left:auto;width:32px;height:32px;border-radius:9px;
+  border:1.5px solid var(--border);background:var(--surface2);
+  color:var(--text2);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .15s;-webkit-appearance:none;flex-shrink:0;
+}
+.btn-settings svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.btn-settings:active{background:var(--accent-light);color:var(--accent);border-color:var(--accent);}
+
+/* SETTINGS MODAL */
+.settings-overlay{position:fixed;inset:0;background:rgba(22,23,43,.5);z-index:250;display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.settings-overlay.open{opacity:1;pointer-events:all;}
+.settings-modal{background:var(--surface);width:100%;max-width:500px;border-radius:22px 22px 0 0;padding:8px 18px 28px;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1);}
+.settings-overlay.open .settings-modal{transform:translateY(0);}
+@media(min-width:540px){.settings-overlay{align-items:center;}.settings-modal{border-radius:20px;padding:22px;}}
+.settings-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;margin:10px 0 16px;}
+@media(min-width:540px){.settings-title{margin-top:0;}}
+.settings-row{display:flex;align-items:center;justify-content:space-between;padding:13px 4px;border-bottom:1px solid var(--border);}
+.settings-row:last-of-type{border-bottom:none;}
+.settings-row-label{display:flex;align-items:center;gap:10px;}
+.settings-row-icon{width:34px;height:34px;border-radius:9px;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.settings-row-icon svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.settings-row-text{font-size:14px;font-weight:600;color:var(--text);}
+.settings-row-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.switch{position:relative;width:46px;height:27px;flex-shrink:0;}
+.switch input{opacity:0;width:0;height:0;}
+.switch-track{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:999px;transition:background .2s;}
+.switch-track::before{position:absolute;content:'';height:21px;width:21px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.2);}
+.switch input:checked + .switch-track{background:var(--accent);}
+.switch input:checked + .switch-track::before{transform:translateX(19px);}
+.btn-settings-close{width:100%;padding:13px;border-radius:var(--btn-r);border:none;background:var(--surface2);color:var(--text);font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:14px;}
+
+/* LOCATION SUGGESTION BANNER */
+.loc-suggest{display:none;background:var(--orange-light);border:1.5px solid var(--orange);border-radius:var(--card-r);padding:12px 13px;margin-bottom:12px;}
+.loc-suggest.visible{display:block;}
+.loc-suggest-top{display:flex;align-items:flex-start;gap:8px;margin-bottom:10px;}
+.loc-suggest-icon{width:22px;height:22px;flex-shrink:0;color:var(--orange);}
+.loc-suggest-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.loc-suggest-text{font-size:13px;color:var(--text);line-height:1.4;}
+.loc-suggest-text b{color:var(--orange);font-family:'Space Grotesk',sans-serif;}
+.loc-suggest-btns{display:flex;gap:8px;}
+.loc-suggest-btn{flex:1;padding:9px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid transparent;font-family:'Inter',sans-serif;-webkit-appearance:none;}
+.loc-suggest-btn.primary{background:var(--orange);color:#fff;}
+.loc-suggest-btn.secondary{background:var(--surface);border-color:var(--border);color:var(--text2);}
+
 /* TABS */
 .tabs{display:flex;gap:3px;background:var(--surface2);padding:3px;border-radius:11px;}
 .tab{
@@ -401,6 +447,9 @@ mark{background:var(--accent-light);color:var(--accent);padding:0 2px;border-rad
         <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       </div>
       <span class="logo">BODEGA</span>
+      <button class="btn-settings" id="btnSettings" onclick="abrirAjustes()" title="Ajustes de sonido/vibración">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 11-4 0v-.09A1.65 1.65 0 009.6 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 110-4h.09A1.65 1.65 0 004.6 9.6a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 114 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 110 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </button>
     </div>
     <div class="tabs">
       <div class="tab active" id="tabEscaneo" onclick="switchTab('escaneo')">
@@ -464,6 +513,20 @@ mark{background:var(--accent-light);color:var(--accent);padding:0 2px;border-rad
         <button class="btn-loc-qr" id="btnLocQr" onclick="toggleLocQr()" title="Escanear QR de estante">
           <svg viewBox="0 0 24 24"><rect x="2" y="2" width="7" height="7"/><rect x="15" y="2" width="7" height="7"/><rect x="2" y="15" width="7" height="7"/><path d="M17 17h4v4M17 21h4v-4"/></svg>
         </button>
+      </div>
+    </div>
+
+    <!-- BANNER: SUGERENCIA DE UBICACIÓN EXISTENTE -->
+    <div class="loc-suggest" id="locSuggest">
+      <div class="loc-suggest-top">
+        <div class="loc-suggest-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="loc-suggest-text" id="locSuggestText"></div>
+      </div>
+      <div class="loc-suggest-btns">
+        <button class="loc-suggest-btn secondary" onclick="rechazarSugerencia()">Dejarlo donde está</button>
+        <button class="loc-suggest-btn primary" id="btnMoverAqui" onclick="aceptarSugerencia()">Mover aquí</button>
       </div>
     </div>
 
@@ -612,12 +675,139 @@ mark{background:var(--accent-light);color:var(--accent);padding:0 2px;border-rad
   </div>
 </div>
 
+<!-- MODAL: AJUSTES SONIDO/VIBRACIÓN -->
+<div class="settings-overlay" id="settingsOverlay" onclick="cerrarAjustesFuera(event)">
+  <div class="settings-modal">
+    <div class="modal-handle"></div>
+    <div class="settings-title">Sonido y vibración</div>
+
+    <div class="settings-row">
+      <div class="settings-row-label">
+        <div class="settings-row-icon">
+          <svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+        </div>
+        <div>
+          <div class="settings-row-text">Sonido al escanear</div>
+          <div class="settings-row-sub">Tonos de confirmación y alerta</div>
+        </div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="chkSonido" onchange="guardarAjustes()">
+        <span class="switch-track"></span>
+      </label>
+    </div>
+
+    <div class="settings-row">
+      <div class="settings-row-label">
+        <div class="settings-row-icon">
+          <svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+        </div>
+        <div>
+          <div class="settings-row-text">Vibración al escanear</div>
+          <div class="settings-row-sub">Confirmación táctil del dispositivo</div>
+        </div>
+      </div>
+      <label class="switch">
+        <input type="checkbox" id="chkVibracion" onchange="guardarAjustes()">
+        <span class="switch-track"></span>
+      </label>
+    </div>
+
+    <button class="btn-settings-close" onclick="cerrarAjustes()">Listo</button>
+  </div>
+</div>
+
 <script>
 /* ===== CONFIG ===== */
 const API_URL = 'https://script.google.com/macros/s/AKfycbxbJG4njLcQi3aTNOmWgzHhft3JpU4ytzSPGRe0JgAXLEemhF7LUQFtw6iMX9JSPqgZ/exec';
 
 let productos = [], scannedItems = [], tabActual = 'escaneo';
 let productoActivo = null, searchTimer = null, manualTimer = null;
+
+/* ===================================================================
+   AJUSTES: SONIDO Y VIBRACIÓN
+   =================================================================== */
+const AJUSTES_KEY = 'bodega_ajustes_v1';
+let ajustes = { sonido: true, vibracion: true };
+
+function cargarAjustes() {
+  try {
+    const raw = localStorage.getItem(AJUSTES_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      ajustes.sonido = parsed.sonido !== false;
+      ajustes.vibracion = parsed.vibracion !== false;
+    }
+  } catch (e) {}
+  document.getElementById('chkSonido').checked = ajustes.sonido;
+  document.getElementById('chkVibracion').checked = ajustes.vibracion;
+}
+
+function guardarAjustes() {
+  ajustes.sonido = document.getElementById('chkSonido').checked;
+  ajustes.vibracion = document.getElementById('chkVibracion').checked;
+  try { localStorage.setItem(AJUSTES_KEY, JSON.stringify(ajustes)); } catch (e) {}
+}
+
+function abrirAjustes() { document.getElementById('settingsOverlay').classList.add('open'); }
+function cerrarAjustes() { document.getElementById('settingsOverlay').classList.remove('open'); }
+function cerrarAjustesFuera(e) { if (e.target === document.getElementById('settingsOverlay')) cerrarAjustes(); }
+
+/* ===================================================================
+   FEEDBACK: SONIDO (Web Audio API, sin archivos externos)
+   =================================================================== */
+let audioCtx = null;
+function getAudioCtx() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch (e) { return null; }
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume().catch(()=>{});
+  return audioCtx;
+}
+
+// Tono corto y agudo, dos beeps ascendentes: usado para "ya está aquí" (confirmación positiva)
+function sonidoYaUbicado() {
+  if (!ajustes.sonido) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  tocarTono(ctx, 880, ctx.currentTime, 0.09, 0.06);
+  tocarTono(ctx, 1320, ctx.currentTime + 0.1, 0.09, 0.06);
+}
+
+// Tono de alerta, dos tonos descendentes más graves: usado para "ubicación distinta detectada"
+function sonidoAlerta() {
+  if (!ajustes.sonido) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  tocarTono(ctx, 660, ctx.currentTime, 0.14, 0.08);
+  tocarTono(ctx, 440, ctx.currentTime + 0.16, 0.16, 0.08);
+}
+
+function tocarTono(ctx, freq, startTime, duration, volume) {
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(freq, startTime);
+  gain.gain.setValueAtTime(volume, startTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.start(startTime);
+  osc.stop(startTime + duration);
+}
+
+/* ===================================================================
+   FEEDBACK: VIBRACIÓN
+   =================================================================== */
+function vibrarYaUbicado() {
+  if (!ajustes.vibracion) return;
+  if (navigator.vibrate) { try { navigator.vibrate(60); } catch(e) {} }
+}
+function vibrarAlerta() {
+  if (!ajustes.vibracion) return;
+  if (navigator.vibrate) { try { navigator.vibrate([80, 60, 80]); } catch(e) {} }
+}
 
 /* ===== TABS ===== */
 function switchTab(tab) {
@@ -632,6 +822,7 @@ function switchTab(tab) {
   if (tab === 'buscar') setTimeout(() => document.getElementById('searchInput').focus(), 150);
   if (tab !== 'escaneo') {
     detenerCamara();
+    cerrarSugerencia();
     if (locScanner) { locScanner.stop().catch(()=>{}); locScanner = null; document.getElementById('locQrViewport').classList.remove('visible'); document.getElementById('btnLocQr').classList.remove('active'); }
   }
   if (tab !== 'buscar') {
@@ -1015,6 +1206,8 @@ async function iniciarCamara() {
     return;
   }
 
+  getAudioCtx(); // desbloquea el AudioContext aprovechando este click directo del usuario
+
   camActiveLoc = loc;
   setScanStatus('processing', '⏳ Iniciando cámara...');
   document.getElementById('camViewport').classList.add('visible');
@@ -1122,18 +1315,81 @@ function setScanStatus(type, text) {
   el.style.display = 'block';
 }
 
-/* ===== AGREGAR ===== */
+/* ===== AGREGAR =====
+   Flujo de comparación de ubicación:
+   - Si el producto ya está en la lista temporal de este escaneo → aviso normal (sin cambios)
+   - Si el producto YA tiene esta misma ubicación guardada en el sistema → sonido/vibración de
+     confirmación ("ya está aquí"), se agrega igual (no hace daño re-confirmar)
+   - Si el producto tiene OTRA ubicación distinta guardada → sonido/vibración de alerta + se
+     muestra un banner con la ubicación actual, pidiendo confirmar si se quiere mover o no
+*/
+let pendienteReubicacion = null; // { producto, locNueva } mientras se espera respuesta del banner
+
 function agregarPorCodigo(codigo, loc) {
   const p = productos.find(x => x.codigo.toUpperCase() === codigo.toUpperCase());
   if (!p) { showFlash('err', '✗ No encontrado: ' + codigo); return; }
-  agregarProducto(p, loc);
+  procesarEscaneo(p, loc);
 }
 
-function agregarProducto(p, loc) {
+function procesarEscaneo(p, loc) {
   if (scannedItems.find(x => x.codigo === p.codigo)) {
     showFlash('warn', 'Ya está en lista: ' + p.codigo);
     return;
   }
+
+  const ubicActual = (p.ubicacion || '').trim().toUpperCase();
+  const ubicNueva = (loc || '').trim().toUpperCase();
+
+  if (ubicActual && ubicActual === ubicNueva) {
+    // Caso A: ya está guardado exactamente en esta ubicación
+    sonidoYaUbicado();
+    vibrarYaUbicado();
+    agregarProducto(p, loc);
+    showFlash('ok', '✓ ' + p.codigo + ' ya estaba aquí · confirmado');
+    return;
+  }
+
+  if (ubicActual && ubicActual !== ubicNueva) {
+    // Caso B: tiene otra ubicación distinta → avisar y sugerir, esperar confirmación
+    sonidoAlerta();
+    vibrarAlerta();
+    mostrarSugerenciaUbicacion(p, loc, ubicActual);
+    return;
+  }
+
+  // Caso normal: producto sin ubicación previa
+  agregarProducto(p, loc);
+}
+
+function mostrarSugerenciaUbicacion(p, locNueva, ubicActual) {
+  pendienteReubicacion = { producto: p, locNueva: locNueva };
+  const banner = document.getElementById('locSuggest');
+  const text = document.getElementById('locSuggestText');
+  text.innerHTML = '<b>' + p.codigo + '</b> ya está en <b>' + ubicActual + '</b>. ¿Quieres moverlo a <b>' + locNueva + '</b>?';
+  banner.classList.add('visible');
+  banner.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function aceptarSugerencia() {
+  if (!pendienteReubicacion) return;
+  const { producto, locNueva } = pendienteReubicacion;
+  agregarProducto(producto, locNueva);
+  showFlash('ok', '✓ ' + producto.codigo + ' → moviendo a ' + locNueva);
+  cerrarSugerencia();
+}
+
+function rechazarSugerencia() {
+  const codigo = pendienteReubicacion && pendienteReubicacion.producto ? pendienteReubicacion.producto.codigo : 'Producto';
+  showFlash('warn', codigo + ' se deja en su ubicación actual');
+  cerrarSugerencia();
+}
+
+function cerrarSugerencia() {
+  pendienteReubicacion = null;
+  document.getElementById('locSuggest').classList.remove('visible');
+}
+
+function agregarProducto(p, loc) {
   scannedItems.push({ codigo: p.codigo, descripcion: p.descripcion, ubicacion: loc, saved: false });
   updateBadgeLista();
   showFlash('ok', '✓ ' + p.codigo + ' → ' + loc);
@@ -1247,7 +1503,7 @@ function agregarManual(codigo) {
   }
   const p = productos.find(x => x.codigo === codigo);
   if (p) {
-    agregarProducto(p, loc);
+    procesarEscaneo(p, loc);
     document.getElementById('manualInput').value = '';
     document.getElementById('manualResults').innerHTML = '';
   }
@@ -1445,6 +1701,7 @@ function highlight(text, words) {
 }
 
 /* ===== INIT ===== */
+cargarAjustes();
 cargarDatos();
 setInterval(cargarDatos, 120000);
 </script>
