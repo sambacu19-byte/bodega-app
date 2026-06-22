@@ -465,6 +465,13 @@ mark{background:var(--accent-light);color:var(--accent);padding:0 2px;border-rad
 .ped-guardado-fecha{font-size:10px;color:var(--text2);}
 .ped-guardado-meta{font-size:12px;color:var(--text2);}
 .ped-guardado-vence{font-size:10px;color:var(--orange);font-weight:600;margin-top:2px;}
+.ped-guardado-acciones{display:flex;gap:6px;margin-top:10px;}
+.ped-acc-btn{flex:1;padding:7px 6px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);font-family:'Inter',sans-serif;text-align:center;transition:all .15s;-webkit-appearance:none;}
+.ped-acc-btn:active{opacity:.8;}
+.ped-acc-edit{border-color:var(--accent);color:var(--accent);background:var(--accent-light);}
+.ped-acc-print{border-color:var(--border);color:var(--text);}
+.ped-acc-del{flex:0 0 38px;border-color:var(--border);color:var(--text2);}
+.ped-acc-del:active{border-color:var(--red);color:var(--red);background:var(--red-light);}
 #printArea{display:none;}
 @media print{
   body *{visibility:hidden !important;}
@@ -714,14 +721,25 @@ mark{background:var(--accent-light);color:var(--accent);padding:0 2px;border-rad
         </button>
       </div>
       <div id="pedLista"></div>
-      <button class="btn-imprimir" onclick="imprimirPedido()">
-        <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        Imprimir pedido
-      </button>
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <button class="btn-imprimir" onclick="imprimirPedido()" style="flex:1;margin-top:0;">
+          <svg viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+          Imprimir
+        </button>
+        <button class="btn-imprimir" id="btnGuardarPedido" onclick="guardarPedido()" style="flex:2;margin-top:0;background:linear-gradient(135deg,var(--green),#059669);">
+          💾 Guardar pedido
+        </button>
+      </div>
     </div>
 
     <div id="pedGuardadosWrap">
-      <div class="section-label" style="margin-top:14px;">Pedidos recientes</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:14px;margin-bottom:7px;">
+        <div class="section-label" style="margin-bottom:0;">Pedidos guardados</div>
+        <button class="sync-btn" onclick="cargarPedidos()">
+          <svg viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+          Actualizar
+        </button>
+      </div>
       <div id="pedGuardadosList"></div>
     </div>
   </div>
@@ -918,7 +936,7 @@ function switchTab(tab) {
   if (tab === 'historial') cargarHistorial();
   if (tab === 'lista') renderScannedList();
   if (tab === 'buscar') setTimeout(() => document.getElementById('searchInput').focus(), 150);
-  if (tab === 'pedidos') { renderPedLista(); renderPedGuardados(); }
+  if (tab === 'pedidos') { renderPedLista(); cargarPedidos(); }
   if (tab !== 'escaneo') {
     detenerCamara();
     cerrarSugerencia();
@@ -1802,25 +1820,39 @@ function highlight(text, words) {
 /* ===== PEDIDOS ===== */
 let pedItems = [];
 let pedTimer = null;
-const PED_KEY = 'bodega_pedidos_v1';
+let pedEditandoId = null;   // ID del pedido que se está editando (null = nuevo)
+let pedidosGuardados = [];  // cache de pedidos del servidor
 
-function getPedidosGuardados() {
+/* ---------- API ---------- */
+async function cargarPedidos() {
   try {
-    const raw = localStorage.getItem(PED_KEY);
-    if (!raw) return [];
-    const list = JSON.parse(raw);
-    const DOS_DIAS = 2 * 24 * 60 * 60 * 1000;
-    return list.filter(p => Date.now() - p.ts < DOS_DIAS);
-  } catch(e) { return []; }
+    const data = await loadJSONP(API_URL + '?action=getPedidos');
+    pedidosGuardados = Array.isArray(data) ? data : [];
+    renderPedGuardados();
+  } catch(e) {
+    pedidosGuardados = [];
+    renderPedGuardados();
+  }
 }
 
-function guardarPedidoEnStorage(pedido) {
-  let list = getPedidosGuardados();
-  list.unshift(pedido);
-  list = list.slice(0, 20);
-  try { localStorage.setItem(PED_KEY, JSON.stringify(list)); } catch(e) {}
+async function guardarPedidoEnServidor(pedido) {
+  const payload = encodeURIComponent(JSON.stringify(pedido));
+  const res = await loadJSONP(API_URL + '?action=savePedido&data=' + payload);
+  return res;
 }
 
+async function actualizarPedidoEnServidor(id, pedido) {
+  const payload = encodeURIComponent(JSON.stringify(pedido));
+  const res = await loadJSONP(API_URL + '?action=updatePedido&id=' + encodeURIComponent(id) + '&data=' + payload);
+  return res;
+}
+
+async function eliminarPedidoDelServidor(id) {
+  const res = await loadJSONP(API_URL + '?action=deletePedido&id=' + encodeURIComponent(id));
+  return res;
+}
+
+/* ---------- Búsqueda de piezas ---------- */
 function onPedSearch() { clearTimeout(pedTimer); pedTimer = setTimeout(runPedSearch, 100); }
 
 function runPedSearch() {
@@ -1866,8 +1898,13 @@ function pedEliminar(idx) {
 }
 
 function limpiarPedido() {
-  if (!confirm('¿Limpiar el pedido actual?')) return;
+  if (pedItems.length && !confirm('¿Limpiar el pedido actual?')) return;
   pedItems = [];
+  pedEditandoId = null;
+  document.getElementById('pedClienteInput').value = '';
+  document.getElementById('pedVendedorInput').value = '';
+  document.getElementById('pedEnvioChk').checked = false;
+  actualizarBtnGuardar();
   renderPedLista();
   updateBadgePedido();
 }
@@ -1876,6 +1913,12 @@ function updateBadgePedido() {
   const b = document.getElementById('badgePedido');
   if (pedItems.length > 0) { b.textContent = pedItems.length; b.style.display = 'inline-flex'; }
   else b.style.display = 'none';
+}
+
+function actualizarBtnGuardar() {
+  const btn = document.getElementById('btnGuardarPedido');
+  if (!btn) return;
+  btn.textContent = pedEditandoId ? '💾 Actualizar pedido' : '💾 Guardar pedido';
 }
 
 function renderPedLista() {
@@ -1901,49 +1944,119 @@ function renderPedLista() {
     </div>`).join('');
 }
 
+/* ---------- Guardar / Actualizar en servidor ---------- */
+async function guardarPedido() {
+  if (!pedItems.length) { showFlash('warn', '⚠ Agrega al menos una pieza'); return; }
+  const btn = document.getElementById('btnGuardarPedido');
+  btn.disabled = true;
+  btn.textContent = 'Guardando...';
+
+  const cliente = document.getElementById('pedClienteInput').value.trim();
+  const vendedor = document.getElementById('pedVendedorInput').value.trim();
+  const envio = document.getElementById('pedEnvioChk').checked;
+  const pedido = { cliente, vendedor, envio, items: pedItems.map(x => ({ ...x })) };
+
+  try {
+    let res;
+    if (pedEditandoId) {
+      res = await actualizarPedidoEnServidor(pedEditandoId, pedido);
+    } else {
+      res = await guardarPedidoEnServidor(pedido);
+    }
+
+    if (res && res.status === 'ok') {
+      showFlash('ok', pedEditandoId ? '✓ Pedido actualizado' : '✓ Pedido guardado · visible para todos');
+      pedEditandoId = pedEditandoId || res.id || null;
+      await cargarPedidos();
+    } else {
+      showFlash('err', '✗ Error al guardar en servidor');
+    }
+  } catch(e) {
+    showFlash('err', '✗ Error de conexión');
+  }
+
+  btn.disabled = false;
+  actualizarBtnGuardar();
+}
+
+/* ---------- Render lista de pedidos guardados ---------- */
 function renderPedGuardados() {
-  const lista = getPedidosGuardados();
   const el = document.getElementById('pedGuardadosList');
-  if (!lista.length) {
+  if (!pedidosGuardados.length) {
     el.innerHTML = '<div class="empty" style="padding:20px 0;"><div class="empty-title" style="font-size:13px;">Sin pedidos guardados</div></div>';
     return;
   }
-  el.innerHTML = lista.map((ped, i) => {
-    const fecha = new Date(ped.ts);
-    const vence = new Date(ped.ts + 2 * 24 * 60 * 60 * 1000);
-    const horasRestantes = Math.max(0, Math.round((vence - Date.now()) / 3600000));
+  el.innerHTML = pedidosGuardados.map((ped) => {
+    const ts = ped.ts || ped.fecha || Date.now();
+    const fecha = new Date(ts);
     const fechaStr = fecha.toLocaleDateString('es', { day:'2-digit', month:'2-digit', year:'2-digit' }) + ' ' + fecha.toLocaleTimeString('es', { hour:'2-digit', minute:'2-digit' });
     const cliente = ped.cliente || 'Sin nombre';
     const vendedor = ped.vendedor ? ` · ${ped.vendedor}` : '';
     const envioTag = ped.envio ? ' 🚚' : '';
-    return `<div class="ped-guardado-card" onclick="verPedidoGuardado(${i})">
+    const items = ped.items || [];
+    const id = ped.id || ts;
+    return `<div class="ped-guardado-card">
       <div class="ped-guardado-top">
         <span class="ped-guardado-cliente">${cliente}${envioTag}</span>
         <span class="ped-guardado-fecha">${fechaStr}</span>
       </div>
-      <div class="ped-guardado-meta">${ped.items.length} pieza${ped.items.length!==1?'s':''} · ${ped.items.reduce((s,x)=>s+x.qty,0)} unidades${vendedor}</div>
-      <div class="ped-guardado-vence">⏱ Expira en ${horasRestantes}h</div>
+      <div class="ped-guardado-meta">${items.length} pieza${items.length!==1?'s':''} · ${items.reduce((s,x)=>s+(x.qty||1),0)} unidades${vendedor}</div>
+      <div class="ped-guardado-acciones">
+        <button class="ped-acc-btn ped-acc-edit" onclick="editarPedidoGuardado('${id}')">✏️ Editar</button>
+        <button class="ped-acc-btn ped-acc-print" onclick="imprimirPedidoGuardado('${id}')">🖨 Imprimir</button>
+        <button class="ped-acc-btn ped-acc-del" onclick="eliminarPedidoGuardado('${id}')">🗑</button>
+      </div>
     </div>`;
   }).join('');
 }
 
-function verPedidoGuardado(idx) {
-  const lista = getPedidosGuardados();
-  const ped = lista[idx];
+/* ---------- Acciones sobre pedidos guardados ---------- */
+function editarPedidoGuardado(id) {
+  const ped = pedidosGuardados.find(p => String(p.id || p.ts || p.fecha) === String(id));
   if (!ped) return;
-  generarPrintArea(ped.cliente, ped.vendedor, ped.envio, ped.items, ped.ts);
+  pedItems = (ped.items || []).map(x => ({ ...x }));
+  pedEditandoId = id;
+  document.getElementById('pedClienteInput').value = ped.cliente || '';
+  document.getElementById('pedVendedorInput').value = ped.vendedor || '';
+  document.getElementById('pedEnvioChk').checked = !!ped.envio;
+  renderPedLista();
+  updateBadgePedido();
+  actualizarBtnGuardar();
+  // scroll al top del panel
+  document.getElementById('panelPedidos').scrollTo({ top: 0, behavior: 'smooth' });
+  showFlash('ok', '✏️ Editando pedido de ' + (ped.cliente || 'Sin nombre'));
+}
+
+function imprimirPedidoGuardado(id) {
+  const ped = pedidosGuardados.find(p => String(p.id || p.ts || p.fecha) === String(id));
+  if (!ped) return;
+  generarPrintArea(ped.cliente, ped.vendedor, ped.envio, ped.items || [], ped.ts || Date.now());
   window.print();
 }
 
+async function eliminarPedidoGuardado(id) {
+  if (!confirm('¿Eliminar este pedido para todos?')) return;
+  try {
+    const res = await eliminarPedidoDelServidor(id);
+    if (res && res.status === 'ok') {
+      pedidosGuardados = pedidosGuardados.filter(p => String(p.id || p.ts || p.fecha) !== String(id));
+      renderPedGuardados();
+      showFlash('ok', '✓ Pedido eliminado');
+    } else {
+      showFlash('err', '✗ Error al eliminar');
+    }
+  } catch(e) {
+    showFlash('err', '✗ Error de conexión');
+  }
+}
+
+/* ---------- Imprimir pedido actual ---------- */
 function imprimirPedido() {
   if (!pedItems.length) return;
   const cliente = document.getElementById('pedClienteInput').value.trim();
   const vendedor = document.getElementById('pedVendedorInput').value.trim();
   const envio = document.getElementById('pedEnvioChk').checked;
-  const pedido = { ts: Date.now(), cliente, vendedor, envio, items: pedItems.map(x => ({ ...x })) };
-  guardarPedidoEnStorage(pedido);
-  generarPrintArea(cliente, vendedor, envio, pedItems, pedido.ts);
-  renderPedGuardados();
+  generarPrintArea(cliente, vendedor, envio, pedItems, Date.now());
   window.print();
 }
 
@@ -2005,11 +2118,11 @@ function generarPrintArea(cliente, vendedor, envio, items, ts) {
         </thead>
         <tbody>${rows}</tbody>
       </table>
-      <div style="margin-top:28px;padding-top:14px;border-top:1px solid #e4e8f0;text-align:center;">
-        <div style="font-size:10px;color:#c4c9d8;">Generado por BodegaSearch · ${fechaLarga} · ${horaStr}</div>
-      </div>
     </div>
     <style>
+      @page { margin: 0; size: letter; }
+      @page :first { margin-top: 0; }
+      html, body { margin: 0 !important; padding: 0 !important; }
       .td-code{padding:10px 12px;font-family:monospace;font-size:13px;border-bottom:1px solid #e4e8f0;vertical-align:middle;}
       .code-pre{color:#9ca3af;font-weight:400;}
       .code-suf{color:#5b5ef4;font-weight:800;font-size:15px;}
@@ -2024,6 +2137,7 @@ function generarPrintArea(cliente, vendedor, envio, items, ts) {
 /* ===== INIT ===== */
 cargarAjustes();
 cargarDatos();
+cargarPedidos();
 setInterval(cargarDatos, 120000);
 </script>
 </body>
