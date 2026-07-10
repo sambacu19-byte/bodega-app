@@ -250,7 +250,7 @@ html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bg);color:
 .result-card:active{border-color:var(--accent);transform:scale(.99);}
 .card-code{font-size:11px;color:var(--accent);font-weight:700;margin-bottom:2px;}
 .card-desc{font-size:13px;color:var(--text);line-height:1.3;}
-.card-location{font-size:12px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:6px 11px;border-radius:9px;white-space:nowrap;flex-shrink:0;}
+.card-location{font-size:12px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#fff;padding:6px 11px;border-radius:9px;white-space:normal;text-align:right;line-height:1.4;flex-shrink:0;max-width:132px;}
 .card-location.empty{background:var(--border);color:var(--text2);}
 mark{background:var(--accent-light);color:var(--accent);padding:0 2px;border-radius:3px;}
 
@@ -1378,27 +1378,41 @@ function agregarManual(codigo) {
 =================================================================== */
 function onSearch() { clearTimeout(searchTimer); searchTimer = setTimeout(runSearch, 80); }
 
-// Determina si el texto de búsqueda "parece" un número/código de estante
-// (solo dígitos, o dígitos seguidos de letras tipo "1A", "27B2")
+// Determina si el texto de búsqueda "parece" una ubicación
+// (estante solo: "1", "27" · estante+posición: "1A", "10D3" · o completa con caja: "10D3-C1")
 function esBusquedaDeEstante(raw) {
   const t = raw.trim().toUpperCase();
   if (!t) return false;
-  // Coincide si es solo números, o números+letras+números típico de una ubicación (ej: 1, 1A, 1A1, 27B2)
-  return /^[0-9]+[A-Z]{0,2}[0-9]*$/.test(t);
+  // Coincide con estante/posición (1, 1A, 1A1, 27B2) y opcionalmente "-C" + número de caja
+  return /^[0-9]+[A-Z]{0,2}[0-9]*(-C[0-9]+)?$/.test(t);
 }
 
-// Devuelve productos cuya ubicación contenga un token que EMPIECE con el estante buscado
+// Separa una búsqueda de ubicación en su parte de estante/posición y, si la trae, su caja
+function parseUbicacionQuery(raw) {
+  const t = raw.trim().toUpperCase();
+  const m = t.match(/^([0-9]+[A-Z]{0,2}[0-9]*)(?:-C([0-9]+))?$/);
+  if (!m) return null;
+  return { base: m[1], caja: m[2] || null };
+}
+
+// Devuelve productos cuya ubicación coincida con lo buscado.
+// - Si la búsqueda NO trae caja (ej: "1", "10D3"): trae todas las cajas de esa base (match parcial del estante).
+// - Si la búsqueda SÍ trae caja (ej: "10D3-C1"): trae solo esa caja exacta en esa base.
+// Incluye TODAS las coincidencias por producto, no solo la primera
+// (ej: si un producto está en 1A1-C2 Y 1A1-C5, ambas aparecen al buscar/imprimir el estante 1).
 function productosEnEstante(estanteQ) {
-  const q = estanteQ.trim().toUpperCase();
+  const parsed = parseUbicacionQuery(estanteQ);
+  if (!parsed) return [];
+  const { base: qBase, caja: qCaja } = parsed;
   const resultados = [];
   productos.forEach(p => {
     const tokens = parseUbicaciones(p.ubicacion);
-    const match = tokens.find(tok => {
-      // quitar sufijo de caja "-C#" para comparar solo la parte del estante
-      const base = tok.split('-C')[0];
-      return base === q || base.startsWith(q);
+    const matches = tokens.filter(tok => {
+      const [tokBase, tokCaja] = tok.split('-C');
+      if (qCaja) return tokBase === qBase && tokCaja === qCaja;
+      return tokBase === qBase || tokBase.startsWith(qBase);
     });
-    if (match) resultados.push({ p, ubicMatch: match });
+    if (matches.length) resultados.push({ p, ubicMatch: matches.join(', ') });
   });
   return resultados;
 }
@@ -1424,7 +1438,7 @@ function runSearch() {
     if (enEstante.length) {
       ultimoEstanteBuscado = raw.toUpperCase();
       document.getElementById('estanteBannerText').innerHTML =
-        '📍 Estante <b>' + raw.toUpperCase() + '</b> · ' + enEstante.length + ' producto' + (enEstante.length!==1?'s':'') + ' encontrado' + (enEstante.length!==1?'s':'');
+        '📍 Ubicación <b>' + raw.toUpperCase() + '</b> · ' + enEstante.length + ' producto' + (enEstante.length!==1?'s':'') + ' encontrado' + (enEstante.length!==1?'s':'');
       banner.classList.add('visible');
       el.innerHTML = enEstante.map(({ p, ubicMatch }) => `
         <div class="result-card" onclick="abrirModal('${p.codigo.replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">
@@ -1477,8 +1491,8 @@ function imprimirEstante() {
     <div style="font-family:'Inter',Arial,sans-serif;padding:32px 36px;max-width:900px;margin:0 auto;color:#16172b;">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;padding-bottom:16px;border-bottom:2.5px solid #5b5ef4;">
         <div>
-          <div style="font-size:10px;font-weight:700;color:#5b5ef4;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Contenido de estante</div>
-          <div style="font-size:24px;font-weight:800;color:#16172b;line-height:1.15;">Estante ${ultimoEstanteBuscado}</div>
+          <div style="font-size:10px;font-weight:700;color:#5b5ef4;letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Contenido de ubicación</div>
+          <div style="font-size:24px;font-weight:800;color:#16172b;line-height:1.15;">Ubicación ${ultimoEstanteBuscado}</div>
         </div>
         <div style="text-align:right;">
           <div style="font-size:20px;font-weight:800;color:#5b5ef4;letter-spacing:1px;">BODEGA</div>
@@ -1507,7 +1521,7 @@ function imprimirEstante() {
       .td-loc{padding:10px 12px;text-align:center;font-size:14px;font-weight:800;color:#16172b;border-bottom:1px solid #e4e8f0;vertical-align:middle;letter-spacing:.5px;}
       tbody tr:nth-child(even){background:#f7f8fc;}
     </style>`;
-  window.print();
+  setTimeout(() => window.print(), 150);
 }
 
 /* ===== MODAL ===== */
@@ -1788,7 +1802,7 @@ function editarPedidoGuardado(id) {
 }
 function imprimirPedidoGuardado(id) {
   const ped = pedidosGuardados.find(p => String(p.id||p.ts||p.fecha) === String(id)); if (!ped) return;
-  generarPrintArea(ped.cliente, ped.vendedor, ped.envio, ped.urgente, ped.items||[], ped.ts||Date.now()); window.print();
+  generarPrintArea(ped.cliente, ped.vendedor, ped.envio, ped.urgente, ped.items||[], ped.ts||Date.now()); setTimeout(() => window.print(), 150);
 }
 async function eliminarPedidoGuardado(id) {
   if (!confirm('¿Eliminar este pedido para todos?')) return;
@@ -1802,7 +1816,7 @@ function imprimirPedido() {
   if (!pedItems.length) return;
   const urgente = document.getElementById('pedUrgenteChk').checked;
   generarPrintArea(document.getElementById('pedClienteInput').value.trim(), document.getElementById('pedVendedorInput').value.trim(), document.getElementById('pedEnvioChk').checked, urgente, pedItems, Date.now());
-  window.print();
+  setTimeout(() => window.print(), 150);
 }
 
 function generarPrintArea(cliente, vendedor, envio, urgente, items, ts) {
