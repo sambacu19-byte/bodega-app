@@ -1,286 +1,202 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <base target="_top">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#10284b">
-  <title>Catálogo de carrocería</title>
-  <style>
-    :root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:#17233b;background:#f2f5fa;--navy:#10284b;--blue:#2154d4;--muted:#67768d;--line:#e2e8f0;--radius:18px}
-    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh}
-    button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:wait}button:focus-visible,input:focus-visible{outline:3px solid #93c5fd;outline-offset:2px}
-    .top{background:linear-gradient(115deg,#0e2343,#1b4075);color:#fff;padding:30px max(18px,calc((100vw - 1200px)/2));position:relative;overflow:hidden}
-    .top:after{content:"";position:absolute;width:280px;height:280px;border:1px solid #ffffff16;border-radius:50%;right:-100px;top:-140px;pointer-events:none}
-    .headrow{display:flex;align-items:flex-start;justify-content:space-between;gap:20px;position:relative;z-index:1}.top h1{font-size:clamp(23px,4vw,34px);margin:0 0 6px;letter-spacing:-.035em}.top p{margin:0;color:#cbdaee;font-size:14px;line-height:1.5}
-    .icon-btn{width:40px;height:40px;min-width:40px;border-radius:12px;border:1px solid #dfe5ee;background:white;display:inline-flex;align-items:center;justify-content:center;color:#27416b}.icon-btn svg,.btn svg{width:19px;height:19px;flex-shrink:0}.icon-btn.header{background:#ffffff17;color:white;border-color:#ffffff42}
-    .wrap{max-width:1200px;margin:auto;padding:20px 16px 58px}.searchbox{display:flex;gap:10px;align-items:center;background:white;padding:10px;border-radius:17px;border:1px solid var(--line);box-shadow:0 10px 30px #1424440a;position:sticky;top:8px;z-index:4}.searchbox input{min-width:0;flex:1;border:0;background:transparent;padding:13px 10px;font-size:16px;color:#182b46;outline:0}.searchbox input:focus-visible{outline:0}
-    .btn{background:var(--blue);color:white;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:11px;padding:12px 15px;font-size:14px;font-weight:700;min-height:43px;white-space:nowrap;transition:background .15s,transform .15s}.btn:hover:not(:disabled){background:#173fbd}.btn:active:not(:disabled){transform:scale(.975)}.btn.secondary{color:#28466a;background:#ecf1f8}.btn.secondary:hover:not(:disabled){background:#dfe9f6}.btn.danger{color:#a83036;background:#fff0f0}.btn.danger:hover{background:#ffe1e1}.btn.sm{font-size:12px;padding:9px 11px;min-height:35px}
-    .meta{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:20px 2px 14px;color:#63728a;font-size:13px}.tag{font-size:11px;font-weight:700;padding:6px 10px;background:#e7eef9;color:#34527e;border-radius:99px}
-    .results{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:15px}.card{background:white;border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 5px 18px #1f314908;overflow:hidden;transition:box-shadow .2s,transform .2s}.card:hover{box-shadow:0 12px 28px #1f314916;transform:translateY(-1px)}.cardhead{padding:17px 16px 11px}.card-titleline{display:flex;gap:10px;justify-content:space-between;align-items:flex-start}.code{font-size:13px;font-weight:800;letter-spacing:.01em;color:#1d4ed8;overflow-wrap:anywhere}.desc{font-size:16px;font-weight:750;line-height:1.4;margin:7px 0 0;min-height:22px;overflow-wrap:anywhere}.details{font-size:12px;line-height:1.6;color:#62718a;padding:0 16px 13px;overflow-wrap:anywhere}
-    .photos{padding:0 12px 12px;display:grid;grid-template-columns:1fr 1fr;gap:8px}.photo{background:#f6f8fb;border:1px solid #e6ebf3;border-radius:12px;position:relative;aspect-ratio:4/3;min-width:0;overflow:hidden}.photo button{width:100%;height:100%;background:transparent;border:0;padding:4px;display:flex;align-items:center;justify-content:center;color:#9aa6b7}.photo img{width:100%;height:100%;object-fit:contain;object-position:center;image-orientation:from-image;display:block;background:white;border-radius:8px}.photo:hover{border-color:#7ea6f0}.photo .num{position:absolute;left:6px;top:6px;font-size:10px;color:#536175;background:#ffffffdc;border-radius:6px;padding:2px 5px}.photo .no-photo{font-size:12px;color:#9aa6b7}.cardfooter{padding:0 12px 12px}.cardfooter .btn{width:100%}.hint{margin:12px 3px 0;font-size:12px;color:#6f7e92;line-height:1.5}
-    .admin{margin-top:28px;background:#fff;border:1px solid var(--line);padding:18px;border-radius:var(--radius)}.admin h2{font-size:17px;margin:0 0 6px}.admin p{font-size:12px;line-height:1.55;color:#758198;margin:0 0 13px}.adminrow{display:flex;gap:9px;flex-wrap:wrap}.adminrow input{min-width:150px;flex:1;border:1px solid #d3dce9;border-radius:11px;padding:11px;font-size:16px}.footer{text-align:center;color:#93a0b3;font-size:12px;padding:26px 0}.status{font-size:12px;line-height:1.5;color:#18774c;margin-top:10px;min-height:0}.status.error{color:#b4232c}.hidden{display:none!important}.loading,.empty{grid-column:1/-1;padding:60px 16px;text-align:center;color:#8491a5}
-    .modal{position:fixed;inset:0;z-index:15;background:#102035a9;display:flex;align-items:center;justify-content:center;padding:12px;overscroll-behavior:contain}.modalbox{background:white;border-radius:19px;width:min(100%,610px);max-height:min(92dvh,900px);overflow-y:auto;box-shadow:0 22px 65px #040e2440;padding:20px}.modalbox.wide{width:min(100%,760px)}.modalhead{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:13px;border-bottom:1px solid var(--line);margin-bottom:14px}.modalhead strong{font-size:17px;overflow-wrap:anywhere}.modalhead .icon-btn{flex-shrink:0}.label{font-size:12px;color:#6e7c90;display:block;font-weight:700;margin:0 0 5px}.field{min-width:0;width:100%;padding:11px;border:1px solid #d4deeb;border-radius:10px;background:#fff;font-size:16px;color:#213351}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.fieldrow{margin-bottom:12px}.sectiontitle{font-size:14px;margin:18px 0 12px;border-top:1px solid var(--line);padding-top:15px}.muted{color:#6b7890;font-size:12px;line-height:1.5}.flex{display:flex;gap:9px;align-items:center;flex-wrap:wrap}.flex .btn{flex:1}.slot{padding:12px 0;border-bottom:1px solid #edf0f5;display:grid;grid-template-columns:78px minmax(0,1fr);gap:12px;align-items:center}.slot:last-child{border:0}.slotpreview{background:#f3f6fa;border:1px solid #e4e9f2;border-radius:9px;height:74px;width:78px;display:flex;align-items:center;justify-content:center;overflow:hidden}.slotpreview img{max-width:100%;width:100%;height:100%;object-fit:contain}.slotcontrols input{width:100%;max-width:100%;font-size:12px}.slotcontrols .flex{margin-top:8px}.slotcontrols .btn{flex:0 0 auto}.heroimg{height:min(50vh,430px);width:100%;object-fit:contain;image-orientation:from-image;background:#f8fafe;border:1px solid #edf1f5;border-radius:12px}.view-controls{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:12px}.view-controls button{min-width:95px}.not-visible{color:#8795a7}.history-list{display:grid;gap:10px}.event{border:1px solid #e3e9f2;padding:12px 14px;border-radius:12px;background:#fbfcff}.eventhead{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:6px}.eventtype{font-size:12px;font-weight:800;color:#234ba0}.eventdate{font-size:11px;color:#78859a}.event p{font-size:12px;color:#5c6c83;margin:5px 0;overflow-wrap:anywhere}.event .newval{color:#1b7456;font-weight:650}.toolbar{display:flex;gap:9px;align-items:center;margin:12px 0 15px}.toolbar input{flex:1}.scanner-target{min-height:60px}.choice{display:grid;gap:12px}.choice .btn{width:100%}.dividertext{text-align:center;color:#9ba6b6;font-size:12px}.sr-only{position:absolute!important;height:1px;width:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap}
-    @media(max-width:640px){.top{padding:24px 17px}.wrap{padding:14px 11px 32px}.results{gap:11px}.card{border-radius:15px}.searchbox{gap:5px;padding:7px;top:4px}.searchbox input{padding:10px 7px}.searchbox .btn{padding:9px 11px;font-size:12px;min-height:42px}.searchbox .btn span{display:none}.modal{padding:0;align-items:flex-end}.modalbox,.modalbox.wide{width:100%;max-height:94dvh;border-radius:19px 19px 0 0;padding:17px}.formgrid{grid-template-columns:1fr 1fr;gap:10px}.slotcontrols .btn{font-size:12px}.top p{max-width:320px}.meta{margin-top:17px}}
-    @media(max-width:360px){.formgrid{grid-template-columns:1fr}.searchbox .btn{padding:9px}.slot{grid-template-columns:65px minmax(0,1fr)}.slotpreview{width:65px}}
-    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important;animation:none!important}}
-  </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js" defer></script>
+<base target="_top">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#34234b;background:#f7f3fc;--purple:#7139b5;--deep:#4b247c;--line:#e7daf5;--muted:#786786}*{box-sizing:border-box}body{margin:0}button,input,a{font:inherit}button,a,input{touch-action:manipulation}button,.button{cursor:pointer}button:disabled{opacity:.5;cursor:wait}button,.button{border:0;border-radius:12px;padding:12px 16px;background:var(--purple);color:white;font-weight:650;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:7px}.secondary{background:#eee4f8;color:var(--deep)}.icon{width:44px;height:44px;padding:10px;border-radius:50%}.icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #b886e7;outline-offset:3px}input{border:1px solid #dac8eb;border-radius:11px;padding:12px;background:#fff;color:#34234b;min-width:0;font-size:16px}input:disabled{background:#faf7fe}.top{background:linear-gradient(120deg,#49216f,#7940b7 65%,#aa7bd1);color:white;padding:30px max(18px,calc((100vw - 1180px)/2)) 42px}.topline{display:flex;justify-content:space-between;align-items:flex-start;gap:15px}.eyebrow{font-size:11px;letter-spacing:.16em;font-weight:750;color:#e4cdf6}.top h1{font-size:clamp(26px,4vw,38px);letter-spacing:-.035em;margin:9px 0}.top p{margin:0;color:#efddff;font-size:14px;line-height:1.6}.top .icon{background:#ffffff24;color:#fff;flex-shrink:0}.wrap{max-width:1180px;margin:auto;padding:0 16px 35px}.searchbox{position:relative;margin-top:-22px;display:flex;gap:8px;flex-wrap:wrap;background:#fff;padding:13px;border:1px solid var(--line);border-radius:18px;box-shadow:0 8px 30px #4b247c0c}.searchbox input{flex:1;min-width:190px;border-color:transparent;background:#f8f4fc}.hint{font-size:13px;color:var(--muted);line-height:1.6;margin:13px 3px}.meta{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:20px 2px 14px;font-size:13px;color:var(--muted)}.tag{border-radius:20px;background:#ebdff7;padding:6px 10px;color:var(--deep);font-size:12px;display:inline-block}.results{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:18px}.card{border:1px solid var(--line);border-radius:20px;background:#fff;overflow:hidden;box-shadow:0 5px 18px #4b247c06;transition:transform .18s,box-shadow .18s}.card:hover{transform:translateY(-2px);box-shadow:0 10px 24px #4b247c0e}.cardhead{padding:18px 18px 11px;display:flex;gap:10px;align-items:flex-start;justify-content:space-between}.code{font-size:12px;letter-spacing:.04em;font-weight:800;color:var(--purple);overflow-wrap:anywhere}.desc{font-size:17px;line-height:1.4;font-weight:700;margin-top:7px;overflow-wrap:anywhere}.share{flex-shrink:0;background:#f4edf9;color:var(--purple);width:36px;height:36px}.details{color:var(--muted);font-size:12px;line-height:1.8;padding:0 18px 13px;overflow-wrap:anywhere}.photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;padding:0 12px 12px}.photo{padding:0;aspect-ratio:4/3;background:#faf7fd;border:1px solid #eee4f7;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#9a86ab;font-size:12px;font-weight:400}.photo img{display:block;width:100%;height:100%;object-fit:contain;background:#fff}.cardfoot{padding:0 12px 12px}.cardfoot button{width:100%;font-size:13px}.admin{margin-top:28px;padding:20px;background:#fff;border:1px solid var(--line);border-radius:18px}.admin h2{font-size:17px;margin:0 0 8px}.admin p{font-size:13px;color:var(--muted);line-height:1.7}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.row input{flex:1}.status{font-size:13px;line-height:1.6;color:var(--deep);white-space:pre-wrap;overflow-wrap:anywhere;margin-top:10px}.empty{grid-column:1/-1;text-align:center;padding:40px 18px;color:var(--muted);background:white;border-radius:16px}.hidden{display:none!important}.footer{padding:25px 10px;text-align:center;color:#9582a6;font-size:12px}.modal{position:fixed;inset:0;background:#26113699;display:flex;align-items:center;justify-content:center;padding:14px;z-index:20;backdrop-filter:blur(4px)}.modalbox{background:#fff;width:min(100%,670px);max-height:92dvh;overflow:auto;border-radius:22px;padding:21px;box-shadow:0 20px 70px #1f10334d}.modalhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}.modalhead h2{margin:0;font-size:19px;overflow-wrap:anywhere}.preview{display:block;width:100%;height:260px;object-fit:contain;background:#faf7fd;border-radius:13px;margin:15px 0}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0}label{display:block;font-size:13px;color:var(--muted)}label input{display:block;width:100%;margin-top:6px}.slot{border:1px solid var(--line);background:#fcfaff;padding:12px;border-radius:13px;margin:10px 0}.slot .row{margin-top:9px}.slot input{font-size:12px;max-width:100%;width:100%}.slot button{padding:9px 12px;font-size:12px}.slot img{width:54px;height:44px;object-fit:contain;border-radius:8px;background:white}.sectiontitle{font-size:15px;margin:23px 0 10px}.historyitem{border-bottom:1px solid var(--line);padding:15px 0;font-size:13px;line-height:1.7}.historyitem time{font-size:12px;color:var(--muted)}.historyitem pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.7 system-ui;background:#faf6fe;padding:10px;border-radius:10px}.full{grid-column:1/-1}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:40;background:#482169;color:white;padding:13px 20px;border-radius:12px;width:max-content;max-width:90vw;font-size:13px}.scanoptions{display:grid;gap:12px}.scanoptions label.button{color:var(--deep);background:#eee4f8;font-weight:650}.scanoptions input[type=file]{margin-top:10px}.scannerreader{width:100%;overflow:hidden}body.modalopen{overflow:hidden}@media(max-width:550px){.top{padding-top:24px}.searchbox button{flex:1}.meta{align-items:flex-start}.formgrid{grid-template-columns:1fr}.modalbox{padding:17px}.preview{height:210px}.row input[type=password]{flex-basis:100%}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Una fotografía visible por producto; visor de foto e información lateral. */
+:root{color:#f5edff;background:#211330;--purple:#a578db;--deep:#e4ccff;--line:#493258;--muted:#c3afcf;color-scheme:dark}
+body{min-height:100vh;background:radial-gradient(ellipse at 10% 5%,#47255f 0,transparent 55%),radial-gradient(ellipse at 90% 70%,#382049 0,transparent 60%),#211330;background-attachment:fixed}.top{background:linear-gradient(115deg,#301344,#5b2b7b 65%,#7b4a9b)}
+.searchbox,.admin{background:#2b1d3b;border-color:#56376d;box-shadow:0 14px 40px #10091b26}.searchbox input{background:#21172e;color:#f6edff}input{background:#251a32;color:#f5edff;border-color:#634a79}input::placeholder{color:#b8a5c8}input:disabled{background:#261a32;color:#c8b6d9}button,.button{background:#a374d5;color:#180c28}.secondary{background:#443052;color:#eddaff}.tag{background:#49305d;color:#ead5fc}
+.card{background:#2a1d37;border-color:#513965;border-radius:17px;box-shadow:0 12px 30px #0b061b1a;display:flex;flex-direction:column}.card:hover{box-shadow:0 16px 32px #0c061b35}.cardhead{padding:16px 17px 9px}.card .code{color:#d1a8ff}.card .desc{font-size:16px}.card .details{padding:0 17px 15px}.share{background:#4a315f;color:#e5cfff}.cardfoot{margin-top:auto;padding:0 14px 15px}.cardfoot button{background:#443052}.empty{background:#2c1c3c;color:#d6c3e6}.footer{color:#b99bcc}
+.carousel{position:relative;min-width:0;width:100%;background:#1c1426;overflow:hidden}.card>.carousel{border-radius:16px 16px 0 0}.carousel-track{position:relative;display:flex;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;direction:ltr;outline-offset:-4px;touch-action:pan-x pan-y pinch-zoom}.carousel-track::-webkit-scrollbar{display:none}.carousel-slide{flex:0 0 100%;width:100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always;aspect-ratio:4/3;padding:0;border:0;border-radius:0;background:#1c1426;display:flex;align-items:center;justify-content:center;color:#c3acd6;font-size:13px;font-weight:400;overflow:hidden}.carousel-slide img{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;background:#1c1426}.photo{cursor:zoom-in}
+.carousel-arrow{position:absolute;top:calc(50% - 18px);width:36px;height:36px;border-radius:50%;padding:0;background:#21152dcf;color:#fff;box-shadow:0 2px 12px #0004;border:1px solid #ffffff29;font-size:27px;font-weight:400;line-height:1;z-index:2}.carousel-arrow.prev{left:10px}.carousel-arrow.next{right:10px}.carousel-arrow:hover{background:#785196}.carousel-counter{position:absolute;right:12px;top:12px;padding:4px 9px;border-radius:20px;background:#1f142ed9;color:#f4e9ff;font-size:11px;pointer-events:none}.carousel-dots{display:flex;gap:7px;position:absolute;bottom:13px;left:50%;transform:translateX(-50%);padding:6px 9px;border-radius:20px;background:#21152d99}.carousel-dot{width:7px;height:7px;border-radius:50%;padding:0;background:#b5a2c5;border:0;position:relative}.carousel-dot::before{content:'';position:absolute;inset:-7px}.carousel-dot[aria-current=true]{background:#fff;box-shadow:0 0 0 2px #b386dcb3}
+.modal{background:#100919d9;backdrop-filter:blur(7px)}.modalbox{background:#2a1d38;color:#f3eaff;border:1px solid #553765;box-shadow:0 28px 100px #07030a80}.modalhead .secondary{background:#442f55;color:#f6eaff}.slot{background:#30203f;border-color:#5a3b70}.slot img{background:#1b1225}.historyitem pre{background:#21152e}.scanoptions label.button{background:#4a315f;color:#f1dfff}
+.productbox{position:relative;width:min(1120px,100%);padding:0;border-radius:18px;overflow:hidden;max-height:92dvh}.viewer-layout{display:grid;grid-template-columns:minmax(0,1.48fr) minmax(300px,1fr);align-items:stretch}.viewer-media{min-width:0;background:#16101e;display:flex;align-items:center;justify-content:center}.viewer-carousel{height:100%}.viewer-carousel .carousel-track{height:100%;min-height:480px;max-height:82dvh}.viewer-carousel .carousel-slide{height:100%;min-height:480px;aspect-ratio:auto;cursor:default}.viewer-carousel .carousel-slide img{max-height:82dvh;background:#16101e}.viewer-info{padding:27px 25px;min-width:0;max-height:82dvh;overflow-y:auto;background:#281d35}.viewer-info .modalhead{padding-right:30px}.viewer-info h2{font-size:clamp(20px,2.2vw,28px);line-height:1.25;text-transform:uppercase;letter-spacing:-.025em}.viewer-code{font-size:12px;color:#bb9ad3;overflow-wrap:anywhere;margin:2px 0 15px}.viewer-location{font-size:13px;color:#dcc9eb;line-height:1.8;margin:0 0 18px}.viewer-actions{display:flex;gap:9px;flex-wrap:wrap}.viewer-actions button{font-size:12px;padding:11px 13px}.viewer-actions .share{width:40px;height:40px;padding:10px}.viewer-close{position:absolute;right:12px;top:12px;width:34px;height:34px;padding:0;border-radius:50%;background:#160f20d9;color:white;font-size:23px;font-weight:400;border:1px solid #ffffff20;z-index:4}.management-panel{border-top:1px solid #513767;margin-top:20px;padding-top:6px}.management-panel .formgrid{gap:10px}.management-panel input{font-size:14px;padding:10px}.management-panel label{font-size:12px}.management-panel #saveDetails{width:100%;font-size:12px}.viewer-info .status{font-size:12px;color:#d1b4e9}
+@media(max-width:700px){.viewer-layout{grid-template-columns:1fr}.productbox{overflow-y:auto;max-height:94dvh;border-radius:17px}.viewer-info{overflow:visible;max-height:none;padding:21px 19px}.viewer-info .modalhead{padding-right:0}.viewer-info h2{font-size:22px}.viewer-carousel .carousel-track{height:auto;min-height:0;max-height:none}.viewer-carousel .carousel-slide{height:auto;min-height:0;aspect-ratio:4/3}.viewer-carousel .carousel-slide img{max-height:58dvh}.viewer-close{background:#1c1229ed}.product-modal{padding:10px}.searchbox input{flex-basis:100%}.searchbox button{flex:1}.formgrid{grid-template-columns:1fr 1fr}.viewer-carousel{height:auto}.card:hover{transform:none}}
+@media(max-width:370px){.management-panel .formgrid{grid-template-columns:1fr}.meta{flex-wrap:wrap}}
+
+</style>
 </head>
 <body>
-  <input type="hidden" id="appUrl" value="<?= appUrl ?>">
-  <input type="hidden" id="scannerUrl" value="<?= scannerUrl ?>">
-  <input type="hidden" id="initialCode" value="<?= initialCode ?>">
-  <header class="top">
-    <div class="headrow"><div><h1>Catálogo de carrocería</h1><p>Encuentra repuestos, fotografías y ubicaciones de bodega.</p></div>
-      <button id="openHistory" class="icon-btn header" title="Historial de cambios" aria-label="Abrir historial de cambios">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.7-6.4M3 3v6h6"/><path d="M12 7v5l3 2"/></svg>
-      </button>
-    </div>
-  </header>
-  <main class="wrap">
-    <div class="searchbox" id="searchbox">
-      <label class="sr-only" for="q">Buscar productos</label>
-      <input id="q" type="search" placeholder="Código, descripción, ubicación…" enterkeyhint="search" autocomplete="off">
-      <button id="scan" class="btn" aria-label="Escanear código QR o de barras" title="Escanear QR o código de barras">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M7 8v8m3-8v8m4-8v8m3-8v8"/></svg><span>Escanear</span>
-      </button>
-      <button id="clear" class="btn secondary" aria-label="Limpiar búsqueda">Limpiar</button>
-    </div>
-    <p class="hint">Puedes buscar escribiendo, escanear un código o tocar una fotografía para verla en grande.</p>
-    <div class="meta"><span id="count" role="status">Cargando catálogo…</span><span id="mode" class="tag">Consulta pública</span></div>
-    <div id="results" class="results"><div class="loading">Cargando productos…</div></div>
-    <section class="admin" id="adminPanel"><h2>Administración <span class="tag">Personal autorizado</span></h2>
-      <p>Con tu PIN puedes subir o eliminar fotografías, modificar códigos y cambiar las ubicaciones. Cada modificación quedará registrada.</p>
-      <div class="adminrow"><input id="pin" type="password" placeholder="PIN de administración" autocomplete="off"><button id="unlock" class="btn">Habilitar edición</button><button id="lock" class="btn secondary hidden">Bloquear edición</button></div>
-      <div class="status" id="adminStatus" role="status"></div>
-    </section>
-    <div class="footer">Catálogo de carrocería · Fotos en Google Drive</div>
-  </main>
-
-  <div class="modal hidden" id="productModal" role="dialog" aria-modal="true" aria-labelledby="productTitle">
-    <div class="modalbox wide"><div class="modalhead"><strong id="productTitle">Producto</strong><button class="icon-btn" id="closeProduct" aria-label="Cerrar">✕</button></div>
-      <p id="productDesc" class="muted"></p>
-      <div id="productFields"></div>
-      <div id="productSlots"></div>
-      <div class="status" id="productStatus" role="status"></div>
-    </div>
-  </div>
-  <div class="modal hidden" id="viewerModal" role="dialog" aria-modal="true" aria-labelledby="viewerTitle">
-    <div class="modalbox"><div class="modalhead"><strong id="viewerTitle">Fotografía</strong><button id="closeViewer" class="icon-btn" aria-label="Cerrar">✕</button></div>
-      <img id="viewerImg" class="heroimg" alt="Fotografía del producto">
-      <p id="viewerDesc" class="muted"></p>
-      <div class="view-controls"><button id="prevPhoto" class="btn secondary sm">Anterior</button><span id="viewerCounter" class="tag">1 / 4</span><button id="nextPhoto" class="btn secondary sm">Siguiente</button></div>
-      <div class="flex" style="margin-top:15px"><button id="editFromViewer" class="btn hidden">Editar ubicación y fotografías</button></div>
-    </div>
-  </div>
-  <div class="modal hidden" id="historyModal" role="dialog" aria-modal="true" aria-labelledby="historyTitle">
-    <div class="modalbox wide"><div class="modalhead"><strong id="historyTitle">Historial de cambios</strong><button id="closeHistory" class="icon-btn" aria-label="Cerrar">✕</button></div>
-      <p class="muted">Fechas, horas, fotos agregadas, sustituciones, códigos y cambios de ubicación. El historial anterior se conserva.</p>
-      <div class="toolbar"><input type="search" id="historyQ" class="field" placeholder="Filtrar por código"><button class="btn sm" id="refreshHistory">Buscar</button></div>
-      <p class="muted" id="historyCount"></p><div id="historyList" class="history-list"></div>
-    </div>
-  </div>
-  <div class="modal hidden" id="scannerModal" role="dialog" aria-modal="true" aria-labelledby="scannerTitle">
-    <div class="modalbox"><div class="modalhead"><strong id="scannerTitle">Escanear código</strong><button id="closeScanner" class="icon-btn" aria-label="Cerrar">✕</button></div>
-      <p class="muted">Lee códigos QR o de barras (EAN, UPC, Code 128 y otros). Para escanear continuamente, abre la cámara en una pestaña independiente.</p>
-      <div class="choice"><button id="openScannerWindow" class="btn">📷 Abrir cámara y escanear en vivo</button>
-        <div class="dividertext">Opción alternativa para Samsung y iPhone</div>
-        <label for="scanFile" class="btn secondary" style="display:flex;cursor:pointer">Tomar foto de un código y reconocerlo</label>
-        <input id="scanFile" class="sr-only" type="file" accept="image/*" capture="environment">
-        <label for="scanGallery" class="btn secondary" style="display:flex;cursor:pointer">Elegir imagen de la galería</label>
-        <input id="scanGallery" class="sr-only" type="file" accept="image/*">
-      </div>
-      <div id="scanReader" class="scanner-target" aria-hidden="true"></div>
-      <div class="status" id="scannerStatus" role="status"></div>
-    </div>
-  </div>
-  <script>
-  'use strict';
-  const $=id=>document.getElementById(id);
-  const iconShare='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V3m-5 5 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>';
-  let products=[],filtered=[],adminPin='',currentCode='',viewerSlot=0,viewerCode='',limit=60,scanWindow=null,scanToken='',fileScanner=null;
-  const appUrl=$('appUrl').value,scannerUrl=$('scannerUrl').value,initialCode=$('initialCode').value;
-  function esc(value){return String(value==null?'':value).replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
-  function photoSrc(id,large){if(!id)return '';if(/^https?:\/\//i.test(id))return id;return 'https://drive.google.com/thumbnail?id='+encodeURIComponent(id)+'&sz=w'+(large?1600:750);}
-  function locationText(p){return [['Ubicación',p.ubicacion],['Estante',p.estante],['Bahía',p.bahia],['Caja',p.caja],['Unidad',p.unidad]].filter(x=>x[1]).map(x=>x[0]+': '+x[1]).join(' · ')||'Sin ubicación registrada';}
-  function show(id){$(id).classList.remove('hidden');document.body.style.overflow='hidden';}
-  function hide(id){$(id).classList.add('hidden');if(!document.querySelector('.modal:not(.hidden)'))document.body.style.overflow='';}
-  function message(id,text,error){$(id).textContent=text;$(id).classList.toggle('error',!!error);}
-  function formatErr(e){return e&&e.message?e.message:String(e);}
-  function findProduct(code){return products.find(p=>p.codigo===code);}
-  function render(){
-    const q=$('q').value.trim().toLocaleLowerCase('es');
-    filtered=products.filter(p=>!q||[p.codigo,p.descripcion,p.ubicacion,p.estante,p.bahia,p.caja].join(' ').toLocaleLowerCase('es').includes(q));
-    $('count').textContent=filtered.length.toLocaleString('es')+' productos encontrados de '+products.length.toLocaleString('es');
-    const shown=filtered.slice(0,limit);
-    $('results').innerHTML=shown.length?shown.map(p=>`<article class="card"><div class="cardhead"><div class="card-titleline"><div class="code">${esc(p.codigo||'Sin código')}</div><button class="icon-btn" style="width:34px;height:34px;min-width:34px" data-share="${esc(p.codigo)}" aria-label="Compartir producto ${esc(p.codigo)}" title="Compartir">${iconShare}</button></div><h2 class="desc">${esc(p.descripcion||'Sin descripción')}</h2></div><div class="details">${esc(locationText(p))}</div><div class="photos">${[0,1,2,3].map(n=>`<div class="photo"><button data-view="${esc(p.codigo)}" data-slot="${n}" aria-label="Ver foto ${n+1} de ${esc(p.codigo)}">${p.fotos[n]?`<img loading="lazy" src="${esc(photoSrc(p.fotos[n],false))}" alt="Foto ${n+1}" onerror="const p=this.parentElement;this.remove();p.insertAdjacentHTML('beforeend','<span class=&quot;no-photo&quot;>No disponible</span>')">`:`<span class="no-photo">Sin foto ${n+1}</span>`}</button>${p.fotos[n]?`<span class="num">${n+1}</span>`:''}</div>`).join('')}</div><div class="cardfooter"><button class="btn secondary sm" data-product="${esc(p.codigo)}">${adminPin?'Editar producto y ubicación':'Ver detalles'}</button></div></article>`).join(''):'<div class="empty">No se encontraron productos con esa búsqueda.</div>';
-    if(filtered.length>limit)$('results').insertAdjacentHTML('beforeend',`<button id="more" class="btn secondary" style="grid-column:1/-1">Mostrar más (${(filtered.length-limit).toLocaleString('es')})</button>`);
+<header class="top"><div class="topline"><div><span class="eyebrow">BODEGA · CONSULTA DE PRODUCTOS</span><h1>Catálogo de carrocería</h1><p>Encuentra cada pieza, sus fotos y su ubicación.</p></div><button id="historyButton" class="icon" aria-label="Abrir historial" title="Historial"><svg viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.5 7M3 5v6h6M12 7v5l3 2"/></svg></button></div></header>
+<main class="wrap">
+<div class="searchbox"><input id="q" aria-label="Buscar productos" type="search" placeholder="Código, descripción o ubicación…" autocomplete="off"><button id="scanButton">Escanear</button><button id="clear" class="secondary">Limpiar</button></div>
+<p class="hint">Una foto a la vez. Desliza para ver más y toca la imagen para ampliarla. En PC también puedes usar las flechas.</p>
+<div class="meta"><span id="count" aria-live="polite">Cargando productos…</span><div class="row"><span id="mode" class="tag">Consulta pública</span><button id="refresh" class="secondary" style="padding:6px 10px;font-size:12px">Actualizar</button></div></div>
+<div id="results" class="results"><div class="empty">Cargando catálogo…</div></div>
+<section class="admin"><h2>Administración <span class="tag">Personal autorizado</span></h2><p>Habilita la gestión para cambiar fotos, códigos y ubicaciones. El PIN se comprueba en el servidor.</p><div class="row"><input id="pin" aria-label="PIN de administración" type="password" placeholder="PIN de administración" autocomplete="current-password"><button id="unlock">Habilitar gestión</button><button id="lock" class="secondary hidden">Bloquear</button></div><div id="adminStatus" class="status" role="status"></div></section>
+<div class="footer">Catálogo de carrocería · Fotografías en Google Drive</div>
+</main>
+<div id="productModal" class="modal product-modal hidden" role="dialog" aria-modal="true" aria-labelledby="productTitle"><div class="modalbox productbox"><button class="viewer-close" data-close="productModal" aria-label="Cerrar ficha" title="Cerrar">×</button><div class="viewer-layout"><div class="viewer-media" id="viewerMedia"></div><div class="viewer-info"><div class="modalhead"><h2 id="productTitle">Producto</h2></div><div id="productDetails"></div><div class="viewer-actions"><button class="icon share" id="viewerShare" aria-label="Compartir producto" title="Compartir producto"></button><button id="toggleManagement" class="secondary hidden" aria-expanded="false" aria-controls="managementPanel">Editar ubicación y fotos</button></div><section id="managementPanel" class="management-panel hidden"><form id="editForm"><div class="formgrid" id="fields"></div><button id="saveDetails" type="submit">Guardar código y ubicación</button></form><h3 class="sectiontitle">Administrar fotografías</h3><div id="slots"></div></section><div id="productStatus" class="status" role="status"></div></div></div></div></div>
+<div id="historyModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="historyTitle"><div class="modalbox"><div class="modalhead"><h2 id="historyTitle">Historial del catálogo</h2><button class="secondary" data-close="historyModal">Cerrar</button></div><p class="hint">Últimos 100 movimientos realizados desde esta web. Fecha y hora según la zona horaria de la hoja.</p><div id="historyList" role="status"></div></div></div>
+<div id="scanModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="scanTitle"><div class="modalbox"><div class="modalhead"><h2 id="scanTitle">Escanear un código</h2><button class="secondary" data-close="scanModal">Cerrar</button></div><p class="hint">Lee códigos QR y de barras. Puedes tomar una foto nítida o elegir una imagen guardada.</p><div class="scanoptions"><a id="liveScanner" class="button hidden" target="_top">Abrir cámara en vivo</a><label class="button secondary">Tomar foto del código<input id="scanCamera" type="file" accept="image/*" capture="environment"></label><label class="button secondary">Elegir imagen<input id="scanFile" type="file" accept="image/*"></label></div><p id="scannerHint" class="hint"></p><div id="scanReader" class="scannerreader"></div><div id="scanStatus" class="status" role="status"></div></div></div>
+<div id="toast" class="toast hidden" role="status"></div>
+<script>
+'use strict';
+const INITIAL_QUERY = <?!= initialQuery ?>;
+const $ = id => document.getElementById(id);
+let products = [], filtered = [], adminPin = '', selected = null, limit = 60, busy = false;
+let viewerSlot = 0;
+const photoPositions = new WeakMap();
+let config = {appUrl:'',scannerUrl:''}, photoScanner = null, libraryPromise = null, lastFocus = null;
+const fieldNames = {codigo:'Código',ubicacion:'Ubicación',estante:'Estante',bahia:'Bahía',caja:'Caja'};
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+function rpc(name,...args){return new Promise((resolve,reject)=>google.script.run.withSuccessHandler(resolve).withFailureHandler(reject)[name](...args))}
+function errorText(e){return e?.message || String(e)}
+function photoSrc(value){
+  if(!value)return '';
+  if(/^https:\/\//i.test(value)){
+    try{const u=new URL(value);if(u.hostname==='drive.google.com'){const id=u.searchParams.get('id')||u.pathname.match(/\/d\/([^/]+)/)?.[1];if(id)return 'https://drive.google.com/thumbnail?id='+encodeURIComponent(id)+'&sz=w1200'}return u.href}catch(e){return ''}
   }
-  $('results').addEventListener('click',e=>{const btn=e.target.closest('button');if(!btn)return;
-    if(btn.id==='more'){limit+=60;render();return;}
-    if(btn.hasAttribute('data-share')){shareProduct(btn.dataset.share);return;}
-    if(btn.hasAttribute('data-view')){openViewer(btn.dataset.view,Number(btn.dataset.slot));return;}
-    if(btn.hasAttribute('data-product'))openProduct(btn.dataset.product);
+  if(!/^[\w-]+$/.test(value))return '';
+  return 'https://drive.google.com/thumbnail?id='+encodeURIComponent(value)+'&sz=w1200';
+}
+function locationText(p){return [p.ubicacion&&'Ubicación: '+p.ubicacion,p.estante&&'Estante: '+p.estante,p.bahia&&'Bahía: '+p.bahia,p.caja&&'Caja: '+p.caja,p.unidad&&'Unidad: '+p.unidad].filter(Boolean).join(' · ')||'Sin ubicación registrada'}
+const shareIcon='<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m9 10 6-4M9 14l6 4"/></svg>';
+function carousel(p,index=null,slot=0){
+  const photos=(p.fotos||[]).map((id,n)=>({src:photoSrc(id),slot:n})).filter(x=>x.src);
+  const slides=photos.length?photos:[{src:'',slot:0}];
+  const active=Math.max(0,slides.findIndex(x=>x.slot===slot)),viewer=index===null;
+  return `<div class="carousel ${viewer?'viewer-carousel':''}" data-carousel data-initial="${active}" ${viewer?'data-viewer="true"':`data-product="${index}"`} role="region" aria-roledescription="carrusel" aria-label="Fotos de ${esc(p.codigo)}"><div class="carousel-track" tabindex="0" aria-label="Fotografías: usa las flechas izquierda y derecha">${slides.map((photo,n)=>{
+    const attrs=`class="carousel-slide ${viewer?'viewer-slide':'photo'}" data-photo-slot="${photo.slot}" aria-label="Foto ${n+1} de ${photos.length||1}"`;
+    const content=photo.src?`<img src="${esc(photo.src)}" alt="Foto ${n+1} de ${esc(p.descripcion)}" loading="${n===active?'eager':'lazy'}" draggable="false">`:'<span>Sin fotografías todavía</span>';
+    return viewer?`<div ${attrs}>${content}</div>`:`<button ${attrs} data-open="${index}" data-slot="${photo.slot}">${content}</button>`;
+  }).join('')}</div>${photos.length>1?`<button class="carousel-arrow prev" data-step="-1" aria-label="Foto anterior">‹</button><button class="carousel-arrow next" data-step="1" aria-label="Foto siguiente">›</button><span class="carousel-counter" aria-live="polite">${active+1} / ${photos.length}</span><div class="carousel-dots">${photos.map((_,n)=>`<button class="carousel-dot" data-slide="${n}" aria-label="Ver foto ${n+1}" aria-current="${n===active}"></button>`).join('')}</div>`:''}</div>`;
+}
+function carouselIndex(c){const t=c.querySelector('.carousel-track');return Math.max(0,Math.min(t.children.length-1,Math.round(t.scrollLeft/(t.clientWidth||1))))}
+function goToSlide(c,n,smooth=true){
+  const t=c.querySelector('.carousel-track'),count=t.children.length;n=(n+count)%count;
+  t.scrollTo({left:n*t.clientWidth,behavior:smooth&&!matchMedia('(prefers-reduced-motion: reduce)').matches?'smooth':'instant'});
+}
+function syncCarousel(c){
+  const t=c.querySelector('.carousel-track'),n=carouselIndex(c),slot=Number(t.children[n].dataset.photoSlot);c.dataset.active=String(n);
+  const counter=c.querySelector('.carousel-counter');if(counter)counter.textContent=(n+1)+' / '+t.children.length;
+  c.querySelectorAll('[data-slide]').forEach(b=>b.setAttribute('aria-current',String(Number(b.dataset.slide)===n)));
+  if(c.dataset.viewer)viewerSlot=slot;
+  else{const p=filtered[Number(c.dataset.product)];if(p)photoPositions.set(p,slot);const foot=c.closest('.card')?.querySelector('.cardfoot [data-open]');if(foot)foot.dataset.slot=String(slot)}
+}
+function bindCarousels(container){
+  container.querySelectorAll('[data-carousel]').forEach(c=>{
+    const t=c.querySelector('.carousel-track');let startX=0,startY=0,moved=false;
+    t.addEventListener('scroll',()=>syncCarousel(c),{passive:true});
+    t.addEventListener('pointerdown',e=>{startX=e.clientX;startY=e.clientY;moved=false});
+    t.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch'){if(Math.abs(e.clientX-startX)>12||Math.abs(e.clientY-startY)>12)moved=true}},{passive:true});
+    t.addEventListener('click',e=>{if(moved){e.preventDefault();e.stopPropagation();moved=false}},true);
+    t.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();goToSlide(c,carouselIndex(c)+(e.key==='ArrowRight'?1:-1))}});
+    t.addEventListener('focusin',e=>{const slide=e.target.closest('.carousel-slide');if(slide){const n=[...t.children].indexOf(slide);if(n!==carouselIndex(c))goToSlide(c,n,false)}});
+    c.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>goToSlide(c,carouselIndex(c)+Number(b.dataset.step)));
+    c.querySelectorAll('[data-slide]').forEach(b=>b.onclick=()=>goToSlide(c,Number(b.dataset.slide)));
+    c.querySelectorAll('img').forEach(img=>img.onerror=()=>img.replaceWith(document.createTextNode('Foto no disponible')));
+    requestAnimationFrame(()=>{goToSlide(c,Number(c.dataset.initial),false);syncCarousel(c)});
   });
-  function load(){google.script.run.withSuccessHandler(data=>{products=data||[];if(initialCode)$('q').value=initialCode;render();}).withFailureHandler(e=>{$('count').textContent='Error al cargar catálogo';$('results').innerHTML='<div class="empty">'+esc(formatErr(e))+'</div>';}).getCatalog();}
-  $('q').addEventListener('input',()=>{limit=60;render();});
-  $('clear').onclick=()=>{$('q').value='';limit=60;render();$('q').focus();};
-  async function shareProduct(code){
-    const p=findProduct(code); const text=(p?p.descripcion+'\n':'')+'Código: '+code;
-    const url=appUrl ? appUrl+(appUrl.includes('?')?'&':'?')+'codigo='+encodeURIComponent(code) : '';
-    try{
-      if(navigator.share){await navigator.share({title:'Repuesto '+code,text,url:url||undefined});return;}
-      if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(url||text);alert('Enlace o código copiado. Puedes pegarlo en cualquier aplicación.');return;}
-      window.prompt('Copia este enlace o código para compartir:',url||text);
-    }catch(err){if(err.name!=='AbortError')window.prompt('Copia el enlace:',url||text);}
-  }
-  $('unlock').onclick=()=>{const pin=$('pin').value.trim();if(!pin){message('adminStatus','Ingresa tu PIN.',true);return;}
-    $('unlock').disabled=true;message('adminStatus','Verificando autorización…');
-    google.script.run.withSuccessHandler(()=>{adminPin=pin;$('pin').value='';$('pin').classList.add('hidden');$('unlock').classList.add('hidden');$('lock').classList.remove('hidden');$('mode').textContent='Edición habilitada';$('unlock').disabled=false;message('adminStatus','Gestión autorizada. Ahora puedes editar productos y consultar el historial.');render();})
-      .withFailureHandler(e=>{$('unlock').disabled=false;message('adminStatus',formatErr(e),true);}).verifyAdminPin(pin);
-  };
-  $('lock').onclick=()=>{adminPin='';$('pin').classList.remove('hidden');$('unlock').classList.remove('hidden');$('lock').classList.add('hidden');$('mode').textContent='Consulta pública';message('adminStatus','Edición bloqueada.');hide('productModal');hide('historyModal');render();};
-  function openProduct(code){
-    const p=findProduct(code);if(!p)return;currentCode=code;
-    $('productTitle').textContent=p.codigo||'Producto sin código';$('productDesc').textContent=p.descripcion||'Sin descripción';
-    message('productStatus','');
-    if(adminPin){
-      $('productFields').innerHTML=`<div class="sectiontitle">Editar código y ubicación</div><div class="fieldrow"><label class="label" for="editCode">Código del producto</label><input id="editCode" class="field" maxlength="150" value="${esc(p.codigo)}"></div><div class="formgrid">${[['ubicacion','Ubicación'],['estante','Estante'],['bahia','Bahía'],['caja','Caja']].map(([k,title])=>`<div class="fieldrow"><label class="label" for="edit_${k}">${title}</label><input class="field" id="edit_${k}" maxlength="200" value="${esc(p[k])}"></div>`).join('')}</div><button id="saveDetails" class="btn">Guardar cambios</button>`;
-      $('saveDetails').onclick=saveDetails;
-      $('productSlots').innerHTML='<div class="sectiontitle">Fotografías (hasta 4)</div>'+[0,1,2,3].map(n=>`<div class="slot"><div class="slotpreview">${p.fotos[n]?`<img src="${esc(photoSrc(p.fotos[n]))}" alt="Foto ${n+1}">`:'<span class="muted">Vacía</span>'}</div><div class="slotcontrols"><label class="label" for="file${n}">Fotografía ${n+1}</label><input id="file${n}" type="file" accept="image/*"><div class="flex"><button class="btn sm" data-upload="${n}">Guardar foto</button>${p.fotos[n]?`<button class="btn danger sm" data-remove="${n}">Eliminar</button>`:''}</div></div></div>`).join('');
-    }else{$('productFields').innerHTML='<p class="muted">'+esc(locationText(p))+'</p><p class="muted">Para editar la ubicación o las fotos, habilita la administración con tu PIN.</p>';$('productSlots').innerHTML='';}
-    show('productModal');
-  }
-  $('productSlots').addEventListener('click',e=>{const btn=e.target.closest('button');if(!btn)return;
-    if(btn.hasAttribute('data-upload'))uploadPhoto(Number(btn.dataset.upload));
-    if(btn.hasAttribute('data-remove'))removePhoto(Number(btn.dataset.remove));
-  });
-  $('closeProduct').onclick=()=>hide('productModal');
-  async function saveDetails(){const p=findProduct(currentCode);if(!p||!adminPin)return;
-    const btn=$('saveDetails');btn.disabled=true;message('productStatus','Guardando cambios…');
-    const payload={pin:adminPin,codigoOriginal:currentCode,codigoNuevo:$('editCode').value,
-      ubicacion:$('edit_ubicacion').value,estante:$('edit_estante').value,bahia:$('edit_bahia').value,caja:$('edit_caja').value};
-    google.script.run.withSuccessHandler(res=>{btn.disabled=false;p.codigo=res.codigo;p.ubicacion=res.ubicacion;p.estante=res.estante;p.bahia=res.bahia;p.caja=res.caja;
-      currentCode=res.codigo;$('productTitle').textContent=res.codigo;message('productStatus',res.message);if(res.cambios && $('q').value.trim())$('q').value=res.codigo;render();})
-      .withFailureHandler(e=>{btn.disabled=false;message('productStatus',formatErr(e),true);}).saveProductDetails(payload);
-  }
-  async function shrinkImage(file){
-    if(file.size>25*1024*1024)throw new Error('Imagen demasiado grande (máximo de origen: 25 MB).');
-    const url=URL.createObjectURL(file);
-    try{
-      const img=new Image();img.src=url;
-      if(img.decode)await img.decode();else await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;});
-      const canvas=document.createElement('canvas');const scale=Math.min(1,1800/Math.max(img.naturalWidth,img.naturalHeight));
-      canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
-      const ctx=canvas.getContext('2d');ctx.fillStyle='#ffffff';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.drawImage(img,0,0,canvas.width,canvas.height);
-      let quality=.85,data=canvas.toDataURL('image/jpeg',quality);
-      while(data.length>6.5*1024*1024&&quality>.40){quality-=.1;data=canvas.toDataURL('image/jpeg',quality);}
-      if(data.length>6.5*1024*1024)throw new Error('No se pudo reducir la foto a 5 MB.');
-      return data;
-    }finally{URL.revokeObjectURL(url);}
-  }
-  async function uploadPhoto(slot){const p=findProduct(currentCode);if(!p||!adminPin)return;const input=$('file'+slot),file=input.files[0];
-    if(!file){message('productStatus','Selecciona primero una imagen.',true);return;}
-    const btn=$('productSlots').querySelector(`[data-upload="${slot}"]`);btn.disabled=true;message('productStatus','Preparando y comprimiendo fotografía…');
-    try{const dataUrl=await shrinkImage(file);message('productStatus','Subiendo fotografía…');
-      google.script.run.withSuccessHandler(res=>{p.fotos[slot]=res.fileId;render();openProduct(currentCode);message('productStatus',res.message);})
-        .withFailureHandler(e=>{btn.disabled=false;message('productStatus',formatErr(e),true);}).savePhoto({pin:adminPin,codigo:currentCode,slot,dataUrl});
-    }catch(e){btn.disabled=false;message('productStatus',formatErr(e),true);}
-  }
-  function removePhoto(slot){const p=findProduct(currentCode);if(!p||!adminPin)return;if(!confirm('¿Eliminar fotografía '+(slot+1)+' de '+p.codigo+'?'))return;
-    message('productStatus','Eliminando fotografía…');
-    google.script.run.withSuccessHandler(res=>{p.fotos[slot]='';render();openProduct(currentCode);message('productStatus',res.message);})
-      .withFailureHandler(e=>message('productStatus',formatErr(e),true)).deletePhoto({pin:adminPin,codigo:currentCode,slot});
-  }
-  function openViewer(code,slot){const p=findProduct(code);if(!p)return;viewerCode=code;viewerSlot=slot;updateViewer();show('viewerModal');}
-  function updateViewer(){const p=findProduct(viewerCode);if(!p)return;const id=p.fotos[viewerSlot];
-    $('viewerTitle').textContent=p.codigo+' · Foto '+(viewerSlot+1);$('viewerCounter').textContent=(viewerSlot+1)+' / 4';$('viewerDesc').textContent=p.descripcion+' · '+locationText(p);
-    const img=$('viewerImg');img.style.display=id?'block':'none';if(id){img.src=photoSrc(id,true);img.alt='Fotografía '+(viewerSlot+1)+' del producto '+p.codigo;}
-    else $('viewerDesc').textContent='No hay foto en esta posición. '+locationText(p);
-    $('editFromViewer').classList.toggle('hidden',!adminPin);
-  }
-  $('prevPhoto').onclick=()=>{viewerSlot=(viewerSlot+3)%4;updateViewer();};
-  $('nextPhoto').onclick=()=>{viewerSlot=(viewerSlot+1)%4;updateViewer();};
-  $('closeViewer').onclick=()=>hide('viewerModal');
-  $('editFromViewer').onclick=()=>{hide('viewerModal');openProduct(viewerCode);};
-  $('openHistory').onclick=()=>{show('historyModal');if(!adminPin){$('historyList').innerHTML='<div class="empty">Ingresa el PIN en Administración para consultar el historial.</div>';$('historyCount').textContent='Historial reservado a personal autorizado.';return;}loadHistory();};
-  $('closeHistory').onclick=()=>hide('historyModal');$('refreshHistory').onclick=loadHistory;
-  $('historyQ').addEventListener('keydown',e=>{if(e.key==='Enter')loadHistory();});
-  function prettyAction(a){return ({FOTO_AGREGADA:'Fotografía agregada',FOTO_REEMPLAZADA:'Fotografía reemplazada',FOTO_ELIMINADA:'Fotografía eliminada',CODIGO_MODIFICADO:'Código modificado',UBICACION_MODIFICADA:'Ubicación modificada',UBICACION_ANTERIOR:'Ubicación (historial anterior)'})[a]||a;}
-  function renderHistory(data){$('historyCount').textContent=(data.total||0).toLocaleString('es')+' registros · mostrando los últimos '+data.items.length;
-    $('historyList').innerHTML=data.items.length?data.items.map(e=>`<article class="event"><div class="eventhead"><span class="eventtype">${esc(prettyAction(e.accion))} ${e.origen==='anterior'?'· Anterior':''}</span><span class="eventdate">${esc(e.fecha)} · ${esc(e.hora)}</span></div>
-      <div class="code">${esc(e.codigo)}</div><p>${esc(e.descripcion||'')}</p><p>${esc(e.campo)}${e.accion.includes('FOTO')?' · Foto '+(Number(String(e.campo).replace('FOTO_',''))||''):''}</p>${!e.accion.includes('FOTO')?`<p>${e.anterior?'Antes: '+esc(e.anterior)+' · ':''}<span class="newval">Ahora: ${esc(e.nuevo||'Vacío')}</span></p>`:''}</article>`).join(''):'<div class="empty">No hay registros para mostrar.</div>';
-  }
-  function loadHistory(){if(!adminPin)return;message('historyCount','Cargando historial…');$('historyList').innerHTML='';
-    google.script.run.withSuccessHandler(renderHistory).withFailureHandler(e=>message('historyCount',formatErr(e),true))
-      .getHistory({pin:adminPin,codigo:$('historyQ').value.trim(),limit:250});
-  }
-  ['productModal','viewerModal','historyModal','scannerModal'].forEach(id=>$(id).addEventListener('click',e=>{if(e.target===$(id)){if(id==='scannerModal')closeScanner();else hide(id);}}));
-  window.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('scannerModal').classList.contains('hidden'))closeScanner();else ['viewerModal','productModal','historyModal'].forEach(id=>hide(id));}});
-  // QR y códigos 1D: no se depende de BarcodeDetector (no está disponible en todos los iPhone).
-  $('scan').onclick=()=>show('scannerModal');$('closeScanner').onclick=closeScanner;
-  function closeScanner(){hide('scannerModal');$('scanFile').value='';$('scanGallery').value='';}
-  function receiveScan(raw){let result=String(raw||'').trim();
-    try{const url=new URL(result);const code=url.searchParams.get('codigo')||url.searchParams.get('code');if(code)result=code;}catch(e){}
-    if(!result){message('scannerStatus','El código escaneado estaba vacío.',true);return;}
-    $('q').value=result;limit=60;render();closeScanner();$('searchbox').scrollIntoView({block:'start',behavior:'smooth'});
-    if(!filtered.length)alert('Se leyó "'+result+'", pero no aparece en el catálogo. Verifica el código.');
-  }
-  async function scanImage(file){if(!file)return;message('scannerStatus','Analizando imagen…');
-    if(typeof Html5Qrcode==='undefined'){message('scannerStatus','No se cargó el lector. Comprueba tu conexión a Internet y vuelve a intentarlo.',true);return;}
-    try{if(fileScanner){try{fileScanner.clear();}catch(e){}}
-      fileScanner=new Html5Qrcode('scanReader',{verbose:false,useBarCodeDetectorIfSupported:false});
-      const code=await fileScanner.scanFile(file,false);receiveScan(code);
-    }catch(e){message('scannerStatus','No se encontró un código legible. Toma otra foto con buena luz, el código centrado y sin reflejos.',true);}
-  }
-  $('scanFile').addEventListener('change',e=>scanImage(e.target.files[0]));
-  $('scanGallery').addEventListener('change',e=>scanImage(e.target.files[0]));
-  // Ventana real de nivel superior: evita la política de cámara del iframe de Apps Script cuando el navegador lo permite.
-  $('openScannerWindow').onclick=()=>{
-    scanToken=String(Date.now())+'_'+Math.random().toString(36).slice(2);
-    const externalScanner=/^https:\/\//i.test(scannerUrl);
-    try{
-      if(externalScanner){
-        const url=scannerUrl+(scannerUrl.includes('?')?'&':'?')+'token='+encodeURIComponent(scanToken);
-        scanWindow=window.open(url,'_blank');
-        if(!scanWindow)throw new Error('Ventana bloqueada');
-        scanWindow.focus();message('scannerStatus','Escáner externo abierto. Autoriza el acceso a la cámara en la nueva pestaña.');return;
-      }
-      const safeToken=JSON.stringify(scanToken);
-      const html=`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Escáner de bodega</title><style>body{font-family:system-ui,Arial;margin:0;background:#101d32;color:white}main{max-width:560px;margin:auto;padding:22px}button,label{background:#2563eb;color:white;border:0;border-radius:12px;padding:14px 17px;display:block;margin:10px 0;width:100%;font-weight:700;font-size:16px;box-sizing:border-box;text-align:center}label{background:#334863}#reader{background:white;color:#182739;border-radius:12px;min-height:160px;padding:5px}p{color:#cbd5e1;line-height:1.5}small{color:#d6e2f2}input{display:none}</style><script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"><`+`/script></head><body><main><h2>Escanear QR o barras</h2><p>Autoriza el acceso a la cámara tras tocar «Iniciar». Apunta al código con la cámara trasera. Si no funciona, toma una fotografía.</p><div id="reader"></div><button id="start">Iniciar cámara</button><button id="stop" style="background:#475569">Detener cámara</button><label for="photo">Tomar foto para reconocer</label><input id="photo" type="file" accept="image/*" capture="environment"><p id="status" role="status"></p><small>El escáner se cierra al reconocer un código.</small></main><scr`+`ipt>(${popupScannerMain.toString()})(${safeToken});<`+`/script></body></html>`;
-      const blobUrl=URL.createObjectURL(new Blob([html],{type:'text/html'}));
-      scanWindow=window.open(blobUrl,'_blank');
-      if(!scanWindow){URL.revokeObjectURL(blobUrl);throw new Error('Ventana bloqueada');}
-      setTimeout(()=>URL.revokeObjectURL(blobUrl),90000);
-      scanWindow.focus();message('scannerStatus','Se abrió el escáner en otra pestaña. Inicia la cámara allí.');
-    }catch(e){message('scannerStatus','No se pudo abrir el escáner independiente. Usa la captura de foto como alternativa.',true);try{scanWindow.close();}catch(err){}}
-  };
-  function popupScannerMain(token){
-    let scanner=null,running=false,done=false;const status=document.getElementById('status');
-    function msg(s){status.textContent=s;}
-    function found(code){if(done)return;done=true;try{window.opener.postMessage({type:'CATALOGO_SCAN',token,value:code},'*');}catch(e){}
-      msg('Código detectado: '+code+'. Regresa a la pestaña del catálogo.');
-      if(running&&scanner){scanner.stop().catch(()=>{});}setTimeout(()=>window.close(),350);
-    }
-    function init(){if(typeof Html5Qrcode==='undefined'){msg('No se pudo cargar el lector. Revisa la conexión a Internet.');return false;}
-      scanner=new Html5Qrcode('reader',{verbose:false,useBarCodeDetectorIfSupported:false});return true;}
-    document.getElementById('start').onclick=async()=>{if(running)return;if(!scanner&&!init())return;
-      msg('Solicitando cámara trasera…');try{
-        await scanner.start({facingMode:'environment'},{fps:12,qrbox:(w,h)=>{const side=Math.min(w,h);return {width:Math.max(150,Math.floor(side*.85)),height:Math.max(120,Math.floor(side*.55))};}},found,()=>{});
-        running=true;msg('Cámara lista. Enfoca un QR o código de barras con buena iluminación.');
-      }catch(e){msg('No se pudo abrir la cámara ('+(e.name||e.message||e)+'). Usa «Tomar foto para reconocer», concede permisos en el navegador o prueba en Chrome/Safari.');}
-    };
-    document.getElementById('stop').onclick=async()=>{if(running&&scanner){try{await scanner.stop();}catch(e){}running=false;msg('Cámara detenida.');}};
-    document.getElementById('photo').onchange=async(e)=>{const file=e.target.files[0];if(!file)return;
-      if(running&&scanner){try{await scanner.stop();}catch(e){}running=false;}
-      if(!scanner&&!init())return;
-      try{msg('Analizando código…');found(await scanner.scanFile(file,false));}
-      catch(e){msg('No se detectó el código. Intenta con mejor luz y enfoca únicamente el código.');}
-    };
-    window.addEventListener('pagehide',()=>{if(running&&scanner)scanner.stop().catch(()=>{});});
-  }
-  window.addEventListener('message',e=>{if(!scanWindow||e.source!==scanWindow)return;const data=e.data;if(!data||data.type!=='CATALOGO_SCAN'||data.token!==scanToken)return;receiveScan(data.value);});
-  load();
-  </script>
-</body></html>
+}
+window.addEventListener('resize',()=>{document.querySelectorAll('[data-carousel]').forEach(c=>{if(c.getClientRects().length)goToSlide(c,Number(c.dataset.active||0),false)})});
+function render(){
+  const q=norm($('q').value.trim());
+  filtered=products.filter(p=>!q||norm([p.codigo,p.descripcion,p.ubicacion,p.estante,p.bahia,p.caja].join(' ')).includes(q));
+  $('count').textContent=filtered.length.toLocaleString('es')+' productos de '+products.length.toLocaleString('es');
+  $('results').innerHTML=filtered.slice(0,limit).map((p,i)=>`<article class="card">${carousel(p,i,photoPositions.get(p)||0)}<div class="cardhead"><div><div class="code">${esc(p.codigo||'Sin código')}</div><div class="desc">${esc(p.descripcion||'Sin descripción')}</div></div><button class="icon share" data-share="${i}" title="Compartir producto" aria-label="Compartir ${esc(p.codigo)}">${shareIcon}</button></div><div class="details">${esc(locationText(p))}</div><div class="cardfoot"><button class="secondary" data-open="${i}" data-slot="${photoPositions.get(p)||0}">${adminPin?'Ver y editar producto':'Ver producto'}</button></div></article>`).join('')||'<div class="empty">No encontramos productos. Prueba con otro código o descripción.</div>';
+  if(filtered.length>limit)$('results').insertAdjacentHTML('beforeend','<button id="more" class="secondary full">Mostrar más productos</button>');
+  if($('more'))$('more').onclick=()=>{limit+=60;render()};bindCarousels($('results'));
+}
+$('results').onclick=e=>{const b=e.target.closest('[data-open],[data-share]');if(!b)return;if(b.dataset.share!==undefined)shareProduct(filtered[Number(b.dataset.share)]);else openProduct(filtered[Number(b.dataset.open)],Number(b.dataset.slot||0))};
+let searchTimer;
+$('q').oninput=()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>{limit=60;render()},150)};
+$('clear').onclick=()=>{clearTimeout(searchTimer);$('q').value='';limit=60;render();$('q').focus()};
+async function load(){
+  $('refresh').disabled=true;
+  try{products=await rpc('getCatalog');render()}catch(e){$('count').textContent='No se pudo cargar';$('results').innerHTML='<div class="empty">'+esc(errorText(e))+'</div>'}
+  finally{$('refresh').disabled=false}
+}
+$('refresh').onclick=load;
+$('unlock').onclick=async()=>{
+  const pin=$('pin').value;if(!pin){$('adminStatus').textContent='Ingresa el PIN.';return}
+  $('unlock').disabled=true;
+  try{await rpc('checkAdminPin',pin);adminPin=pin;$('pin').value='';$('pin').classList.add('hidden');$('unlock').classList.add('hidden');$('lock').classList.remove('hidden');$('mode').textContent='Gestión habilitada';$('adminStatus').textContent='Ya puedes editar fotos, códigos y ubicaciones.';render()}
+  catch(e){$('adminStatus').textContent=errorText(e)}finally{$('unlock').disabled=false}
+};
+$('pin').onkeydown=e=>{if(e.key==='Enter')$('unlock').click()};
+$('lock').onclick=()=>{if(busy)return;adminPin='';$('pin').value='';$('pin').classList.remove('hidden');$('unlock').classList.remove('hidden');$('lock').classList.add('hidden');$('mode').textContent='Consulta pública';$('adminStatus').textContent='Gestión bloqueada.';closeModal('productModal');render()};
+function showModal(id){lastFocus=document.activeElement;$(id).classList.remove('hidden');document.body.classList.add('modalopen');$(id).querySelector('button').focus()}
+function closeModal(id){if(busy&&id==='productModal')return;$(id).classList.add('hidden');if(id==='productModal')selected=null;if(!document.querySelector('.modal:not(.hidden)')){document.body.classList.remove('modalopen');lastFocus?.focus()}}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.dataset.close));
+document.querySelectorAll('.modal').forEach(m=>m.onclick=e=>{if(e.target===m)closeModal(m.id)});
+document.addEventListener('keydown',e=>{
+  const m=document.querySelector('.modal:not(.hidden)');if(!m)return;
+  if(e.key==='Escape')closeModal(m.id);
+  if(m.id==='productModal'&&(e.key==='ArrowLeft'||e.key==='ArrowRight')&&!e.target.closest('input,textarea,select,.carousel-track')){e.preventDefault();const c=$('viewerMedia').querySelector('[data-carousel]');if(c)goToSlide(c,carouselIndex(c)+(e.key==='ArrowRight'?1:-1))}
+  if(e.key==='Tab'){const f=[...m.querySelectorAll('button,input,a[href],summary')].filter(x=>!x.disabled&&x.getClientRects().length);const first=f[0],last=f[f.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}
+});
+function openProduct(p,slot=0){
+  selected=p;viewerSlot=slot;$('managementPanel').classList.add('hidden');$('toggleManagement').setAttribute('aria-expanded','false');$('toggleManagement').textContent='Editar ubicación y fotos';paintProduct(slot);showModal('productModal');
+}
+function paintProduct(slot=viewerSlot){
+  const p=selected;if(!p)return;viewerSlot=slot;
+  $('productTitle').textContent=p.descripcion||'Producto sin descripción';
+  $('productDetails').innerHTML='<div class="viewer-code">'+esc(p.codigo||'Sin código')+'</div><p class="viewer-location">'+esc(locationText(p))+'</p>';
+  $('viewerMedia').innerHTML=carousel(p,null,slot);bindCarousels($('viewerMedia'));$('viewerShare').innerHTML=shareIcon;
+  $('toggleManagement').classList.toggle('hidden',!adminPin);if(!adminPin)$('managementPanel').classList.add('hidden');
+  $('fields').innerHTML=Object.entries(fieldNames).map(([key,label])=>`<label>${label}<input id="edit_${key}" value="${esc(p[key])}" maxlength="300" ${adminPin?'':'disabled'} ${key==='codigo'?'required':''}></label>`).join('');
+  $('saveDetails').classList.toggle('hidden',!adminPin);
+  $('slots').innerHTML=adminPin?[0,1,2,3].map(n=>{const src=photoSrc(p.fotos[n]);return `<div class="slot"><div class="row">${src?`<img src="${esc(src)}" alt="Foto ${n+1}">`:''}<strong>Foto ${n+1}</strong>${src?`<button class="secondary" data-preview="${n}">Ver</button>`:'<span class="tag">Vacía</span>'}</div><div class="row"><input aria-label="Seleccionar foto ${n+1}" id="file${n}" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><button data-upload="${n}">Guardar foto</button>${src?`<button class="secondary" data-delete="${n}">Eliminar</button>`:''}</div></div>`}).join(''):'';
+  $('productStatus').textContent=adminPin?'Puedes editar la ubicación y las fotos desde el botón de arriba.':'';
+}
+$('viewerShare').onclick=()=>shareProduct(selected);
+$('toggleManagement').onclick=()=>{if(!adminPin||busy)return;const open=$('managementPanel').classList.toggle('hidden')===false;$('toggleManagement').setAttribute('aria-expanded',String(open));$('toggleManagement').textContent=open?'Ocultar edición':'Editar ubicación y fotos'};
+$('slots').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.preview!==undefined){const c=$('viewerMedia').querySelector('[data-carousel]');const slides=[...c.querySelector('.carousel-track').children];const n=slides.findIndex(x=>Number(x.dataset.photoSlot)===Number(b.dataset.preview));if(n>=0)goToSlide(c,n)}if(b.dataset.upload!==undefined)upload(Number(b.dataset.upload));if(b.dataset.delete!==undefined)removePhoto(Number(b.dataset.delete))};
+async function mutation(name,payload,message,slot=viewerSlot){
+  if(busy||!selected)return;busy=true;const original=selected;
+  $('productModal').querySelectorAll('button,input').forEach(x=>x.disabled=true);$('lock').disabled=true;$('productStatus').textContent='Guardando…';
+  try{const p=await rpc(name,{...payload,pin:adminPin,codigo:original.codigo,version:original.version});const i=products.indexOf(original);if(i>=0)products[i]=p;selected=p;paintProduct(slot);render();$('productStatus').textContent=message}
+  catch(e){$('productStatus').textContent=errorText(e)}
+  finally{busy=false;$('lock').disabled=false;$('productModal').querySelectorAll('button,input').forEach(x=>x.disabled=false)}
+}
+$('editForm').onsubmit=e=>{e.preventDefault();if(!adminPin||busy)return;const payload={};Object.keys(fieldNames).forEach(k=>payload[k==='codigo'?'nuevoCodigo':k]=$('edit_'+k).value);mutation('saveProduct',payload,'Código y ubicación guardados.')};
+async function upload(slot){
+  if(!adminPin||busy||!selected)return;const file=$('file'+slot).files[0];if(!file){$('productStatus').textContent='Selecciona una imagen.';return}
+  if(file.size>5*1024*1024){$('productStatus').textContent='La imagen supera 5 MB. Reduce su tamaño.';return}
+  if(!['image/jpeg','image/png','image/webp','image/gif'].includes(file.type)){$('productStatus').textContent='Usa JPG, PNG, WebP o GIF. Si tu iPhone usa HEIC, conviértela a JPG.';return}
+  const p=selected;try{const dataUrl=await new Promise((resolve,reject)=>{const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=()=>reject(new Error('No se pudo leer la imagen.'));r.readAsDataURL(file)});if(selected===p)await mutation('savePhoto',{slot,dataUrl},'Fotografía guardada.',slot)}catch(e){$('productStatus').textContent=errorText(e)}
+}
+function removePhoto(slot){if(!adminPin||busy||!selected)return;if(confirm('¿Retirar la foto '+(slot+1)+' del catálogo?'))mutation('deletePhoto',{slot},'Foto retirada del catálogo.',slot)}
+let toastTimer;
+function toast(text){$('toast').textContent=text;$('toast').classList.remove('hidden');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').classList.add('hidden'),3500)}
+async function shareProduct(p){
+  if(!p)return;let url='';if(config.appUrl){const u=new URL(config.appUrl);u.searchParams.set('q',p.codigo);url=u.href}
+  const text=p.codigo+' · '+p.descripcion+'\n'+locationText(p);
+  try{if(navigator.share){try{await navigator.share({title:p.descripcion,text,...(url?{url}:{})});return}catch(e){if(e.name==='AbortError')return}}
+    const content=text+(url?'\n'+url:'');try{await navigator.clipboard.writeText(content);toast('Información del producto copiada.')}catch(e){prompt('Copia esta información para compartir:',content)}
+  }catch(e){toast('No se pudo compartir. Inténtalo de nuevo.')}
+}
+$('historyButton').onclick=async()=>{showModal('historyModal');$('historyList').textContent='Cargando historial…';try{const rows=await rpc('getHistory');$('historyList').innerHTML=rows.length?rows.map(r=>`<article class="historyitem"><time>${esc(r.fecha)} · ${esc(r.zona)}</time><div><strong>${esc(r.accion)}</strong></div><div>${esc(r.codigoAntes===r.codigo?r.codigo:r.codigoAntes+' → '+r.codigo)}</div><details><summary>Ver cambios</summary><pre>Antes: ${esc(r.antes)}\nDespués: ${esc(r.despues)}</pre></details></article>`).join(''):'<p class="hint">Todavía no hay movimientos. Los cambios anteriores a esta versión no tienen registro.</p>'}catch(e){$('historyList').textContent=errorText(e)}};
+function loadScannerLibrary(){
+  if(typeof Html5Qrcode!=='undefined')return Promise.resolve();
+  if(libraryPromise)return libraryPromise;
+  libraryPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js';s.onload=resolve;s.onerror=()=>{libraryPromise=null;s.remove();reject(new Error('No se pudo cargar el lector. Revisa tu conexión e inténtalo de nuevo.'))};document.head.appendChild(s)});return libraryPromise;
+}
+$('scanButton').onclick=()=>{
+  $('scanStatus').textContent='';$('scanReader').innerHTML='';showModal('scanModal');
+  const enabled=!!config.scannerUrl&&!!config.appUrl;$('liveScanner').classList.toggle('hidden',!enabled);
+  if(enabled){const u=new URL(config.scannerUrl);u.hash=new URLSearchParams({return:config.appUrl}).toString();$('liveScanner').href=u.href}
+  $('scannerHint').textContent=enabled?'Para cámara en vivo, abre el escáner y permite el acceso a la cámara.':'La lectura desde foto ya está disponible. La cámara en vivo se habilita al configurar el escáner externo.';
+};
+let decoding=false;
+async function scanImage(input){
+  if(decoding)return;const file=input.files[0];input.value='';if(!file)return;decoding=true;$('scanStatus').textContent='Leyendo imagen…';
+  $('scanCamera').disabled=true;$('scanFile').disabled=true;
+  try{await loadScannerLibrary();if(!photoScanner)photoScanner=new Html5Qrcode('scanReader',{verbose:false});const code=await photoScanner.scanFile(file,false);$('q').value=String(code).trim();limit=60;render();closeModal('scanModal');toast('Código leído: '+code)}
+  catch(e){$('scanStatus').textContent='No se pudo leer el código. Acércate, evita reflejos y encuadra el código completo con sus bordes. Usa una foto JPG o PNG.'}
+  finally{decoding=false;$('scanCamera').disabled=false;$('scanFile').disabled=false;try{photoScanner?.clear()}catch(e){}}
+}
+$('scanCamera').onchange=e=>scanImage(e.target);$('scanFile').onchange=e=>scanImage(e.target);
+$('q').value=INITIAL_QUERY;
+rpc('getAppConfig').then(c=>config=c).catch(()=>{});
+load();
+</script>
+</body>
+</html>
